@@ -31,18 +31,17 @@ connection.connect(error => {
     }
 
     //get all numbers from parts
-    connection.query("SELECT number FROM parts",  function (err, result, fields) {
+    connection.query("SELECT * FROM parts",  function (err, result, fields) {
         if (err) throw err;
         for (var i = 0; i < result.length; i++) {
             var row = result[i];
-            parts[i] = row.number;                    //put into parts array
+            parts[i] = row;                    //put into parts array
         }
 
-  //      print(parts);
+        print(parts);
         console.log("job complete, exit database connection");
         connection.end();                             //close connection
         insertOrder(parts, orderdb);
-
     });
 
     //If Everything goes correct, Then start Express Server
@@ -53,6 +52,11 @@ connection.connect(error => {
 });
 
 //-----------------------------------------------------------------------------------
+//-----------------------------------------------------------------------------------
+//-----------------------------------------------------------------------------------
+//-----------------------------------------------------------------------------------
+
+
 //order db connection
 var dbpath = './order.db';
 var dbExists = fs.existsSync(dbpath);
@@ -70,19 +74,19 @@ var orderdb = new sqlite3.Database(dbpath, sqlite3.OPEN_READWRITE,  (err) => {
     });
 
 //BEGGINGING OF FUNCTIONS---------------------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------------------------------------------------------------------------
 
-//prints the parts array
+//prints the parts array, which holds all information for every legacy db part
 function print(parts) {
     for (var i = 0; i < parts.length; i++) {
-        console.log(parts[i] + "print");
+        console.log(`${parts[i].number} ${parts[i].description} ${parts[i].price} ${parts[i].weight} ${parts[i].pictureURL}`);
     }
 }
 
 
 //takes all of the parts array and inserts them into the order db
 function insertOrder(parts, db) {
-
- //   const ins = db.prepare('INSERT INTO OrderItem (partId) VALUES (?)');
 
     for (var i = 0; i < parts.length; i++) {
         db.run('INSERT INTO CustomerOrder (orderId, customerId, orderDate, shipAddr, email, creditCardNumber, creditCardExpDate, status, shippingAmount, totalAmount)' +
@@ -93,7 +97,7 @@ function insertOrder(parts, db) {
         });
     }
 
-    runQueries(db);
+ //   runQueries(db);
 }
 
 //function to run queries on the order db
