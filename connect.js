@@ -78,13 +78,15 @@ function print(parts) {
     }
 }
 
+
 //takes all of the parts array and inserts them into the order db
 function insertOrder(parts, db) {
 
  //   const ins = db.prepare('INSERT INTO OrderItem (partId) VALUES (?)');
 
     for (var i = 0; i < parts.length; i++) {
-        db.run('INSERT INTO OrderItem (partId) VALUES (?)',parts[i], function(err) {     //insert part id
+        db.run('INSERT INTO CustomerOrder (orderId, customerId, orderDate, shipAddr, email, creditCardNumber, creditCardExpDate, status, shippingAmount, totalAmount)' +
+                                          'VALUES (?, 1, 1000,"address", "email", 662346234, 2000, "status", 10.00, 20.00)', function(err) {     //insert part id
             if (err) {
               return console.log(err.message);
             }
@@ -96,7 +98,7 @@ function insertOrder(parts, db) {
 
 //function to run queries on the order db
 function runQueries(db) {
-    db.each('SELECT partId FROM OrderItem', (err, row) => {
-        console.log(`${row.partId}`)
+    db.each('SELECT * FROM CustomerOrder', (err, row) => {
+        console.log(`${row.orderId} ${row.customerId} ${row.orderDate} ${row.shipAddr} ${row.email} ${row.creditCardNumber} ${row.creditCardExpDate} ${row.status} ${row.shippingAmount} ${row.totalAmount}`);
     })
 }
