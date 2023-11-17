@@ -1,6 +1,7 @@
 //app.js
 //Connects to connec.js, collects data, and sends to ejs file
-
+const dir = '${__dirname}/';
+const path = require('path');
 const express = require('express')
 var fs = require('fs');
 const app = express()
@@ -8,15 +9,22 @@ const sqlite3 = require('sqlite3').verbose();
 
 var port = process.env.PORT || 3000;
 
+//Compents temp placement
+app.use(express.static('/'));
+
+//absolute path name
+const options = {
+  root: path.join(__dirname)
+};
+
 //holds order data
 var p = [];
-// set the view engine to ejs
-app.set('view engine', 'ejs');
 
-//render the index ejs file
-app.get('/', (req, res) => {
-  res.render('index');
-})
+
+// sendFile will go here
+app.get('/', function(req, res) {
+  res.sendFile(path.join(__dirname, '/index.html'));
+});
 
 //grab part information from legacy db
 const parts = require('./connect');
