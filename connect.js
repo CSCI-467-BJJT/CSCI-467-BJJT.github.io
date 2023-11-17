@@ -1,11 +1,14 @@
-//document.body.innerHTML = '<h1> Please work </h1>';
-
+//connect.js
+//connects to legacy db
 const express = require('express');
 const mysql = require('mysql');
- 
+
 const app = express();
 const PORT = 3000;
- 
+
+
+//-------------------------------------------------------------------------------
+
 // Create a connection to the database
 const connection = mysql.createConnection({
   host: 'blitz.cs.niu.edu',
@@ -21,15 +24,14 @@ connection.connect(error => {
             + "while connecting to database.");        
         throw error;
     }
-
-    connection.query("SELECT * FROM parts",  function (err, result, fields) {
-        if (err) throw err;
-        console.log(result); 
-    });
-     
-    //If Everything goes correct, Then start Express Server
-    app.listen(PORT, ()=>{
-        console.log("Database connection is Ready and "
-             + "Server is Listening on Port ", PORT);
-    })
 });
+
+//grab all part info
+    module.exports = {
+        getAll: async result => {
+            connection.query("SELECT * FROM parts",  function (err, rows) {
+            if (err) throw err;
+            result(rows);
+            });
+        }
+    }
