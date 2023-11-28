@@ -12,20 +12,18 @@
   <!-- Navigation bar -->
   <nav class="navbar navbar-dark bg-dark">
     <div class="container-fluid">
-      <a class="navbar-brand" href="#">Wheely Good Auto Parts</a>
+      <a class="navbar-brand" href="index.html">Wheely Good Auto Parts</a>
 
       <!-- Grabs the pages needed to be displayed on the navbar -->
       <div class="offcanvas-body" id="navbarComponents">
         <ul class="navbar-nav list-group-horizontal">
-          <li v-for="(page, index) in pages" class="navbar-nav mx-2 px-2" :key="index">
+          <li v-for="link in links" class="navbar-nav mx-2 px-2">
             <a 
             class="nav-link"
-            :class="{active: activePage == index}"
             aria-current="page" 
-            :href="page.link.url" 
-            :title="`${page.link.text} page`"
-            @click.prevent="activePage = index"
-            >{{ page.link.text }}</a>
+            :href="link.url" 
+            :title="`${link.text} page`"
+            >{{ link.text }}</a>
           </li>
         </ul>
       </div>
@@ -45,9 +43,10 @@
 
   <!-- Main content -->
   <div class="container">
-    <div id="pages">
-      <h1>{{ pages[activePage].pageTitle }}</h1>
-      <p>{{ pages[activePage].content }}</p>
+    <div>
+      <!-- <h1>{{ pageTitle }}</h1>
+      <p>{{ content }}</p> -->
+      <p>Welcome, We Have Wheely Good Auto Parts :3</p>
     </div>
 
     <!-- navbar that contains pages -->
@@ -115,6 +114,6 @@
   <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
   <!-- Components -->
   <script src="components/navbarComponents.js"></script>
-  <script src="components/pages.js"></script>
+  <!-- <script src="components/pages.js"></script> -->
   <script src="components/cardProducts.js"></script>
 </html>
