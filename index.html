@@ -68,9 +68,9 @@
     </nav>
 
     <!-- Bare bones product card group-->
-    <div class="row row-cols-1 row-cols-md-4 g-4" id="cardProducts">
-      <div class="col">
-        <div v-for="product in products" class="card h-100">
+    <div class="row row-cols-1 row-cols-md-4 g-1" id="cardProducts">
+      <div v-for="product in products" class="col">
+        <div  class="card h-100">
           <img :src="product.img" class="card-img-top" alt="...">
           <div class="card-body">
             <h5 class="card-title">{{ product.name }}</h5>
