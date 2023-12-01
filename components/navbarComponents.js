@@ -4,8 +4,8 @@ $(document).ready(function () {
         return {
           //activePage: 0,
           links: [
-            {text: 'Home', url: '/index.html'},
-            {text: 'Employee', url: '/employeeLogin.html'}
+            {text: 'Home', url: '/views/index.html'},
+            {text: 'Employee', url: '/views/employeeLogin.html'}
           ]
           // pages: [
           //   {
