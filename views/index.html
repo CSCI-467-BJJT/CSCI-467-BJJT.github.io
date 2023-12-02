@@ -6,6 +6,10 @@
     <title>Wheely Good Auto Parts</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
     <script src="https://unpkg.com/vue@3"></script>
+
+    <script>
+      const products = [];  // Define the global products array
+    </script>
 </head>
 
 <body>
@@ -69,21 +73,21 @@
     </nav>
 
     <!-- Bare bones product card group-->
-    <div class="row row-cols-1 row-cols-md-4 g-1" id="cardProducts">
+    <div class="row row-cols-1 row-cols-md-6 g-1" id="cardProducts">
       <div v-for="product in products" class="col">
-        <div class="card h-100">
-          <img :src="product.img" class="card-img-top" alt="...">
+        <div class="card border-5"></div>
+          <img :src= "product.img" class="card-img-top" alt="...">
           <div class="card-body">
             <h5 class="card-title">{{ product.name }}</h5>
-            <p class="card-text">{{ product.description }}</p>
-            <a href="#" class="btn btn-primary">Add to Cart</a>
+            <a href="#" class="btn btn-primary" @click="addCart(product.name)">Add to Cart</a>
           </div>
-          <div class="card-footer">
+          <div class="card-footer border-0 bg-transparent">
             <small class="text-body-secondary">${{ product.price }}</small>
           </div>
         </div>
       </div>
     </div>
+  </div>
 
     <!-- navbar that contains pages -->
     <nav class="pt-4" aria-label="...">
@@ -112,6 +116,8 @@
   <script src="https://code.jquery.com/jquery-3.6.4.min.js"
     integrity="sha256-oP6HI9z1XaZNBrJURtCoUT5SUnxFr8s3BzRl+cbzUq8="
     crossorigin="anonymous"></script>
+  <!-- Axios -->
+  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
   <!-- Vue.js -->
   <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
   <!-- Components -->

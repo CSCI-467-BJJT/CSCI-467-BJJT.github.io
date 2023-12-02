@@ -6,40 +6,83 @@ const express = require('express')
 var fs = require('fs');
 const app = express()
 const sqlite3 = require('sqlite3').verbose();
+const mysql = require('mysql');
+const util = require('util');
+const cors = require('cors');
 
 var port = process.env.PORT || 3000;
 
-//Compents temp placement
-app.use(express.static('/'));
+app.use(cors());
 
-//absolute path name
-const options = {
-  root: path.join(__dirname)
-};
-
-//holds order data
-var p = [];
-
-
-// sendFile will go here
-app.get('/', function(req, res) {
-  res.sendFile(path.join(__dirname, '/index.html'));
+// Create a connection to the database
+const connection = mysql.createConnection({
+  host: 'blitz.cs.niu.edu',
+  user: 'student',
+  password: 'student',
+  database: "csci467"       
+});
+ 
+// open the MySQL connection
+connection.connect(error => {
+    if (error){
+        console.log("A error has been occurred "
+            + "while connecting to database.");        
+        throw error;
+    }
 });
 
-//grab part information from legacy db
-const parts = require('./connect');
-app.get('/getParts', (req, res) => {
-  parts.getAll((list) => {
-    res.render('parts.ejs', { all: list });
-    for (var i = 0; i < list.length; i++) {
-        p[i] = list[i];
+//grab all part info
+module.exports = {
+    getAll: async result => {
+        connection.query("SELECT * FROM parts",  function (err, rows) {
+        if (err) throw err;
+        result(rows);
+        });
     }
+}
 
-    //these two functions will not be here in reality, but this is how I am adding order information into the order db
-    insertOrder(p, orderdb);
-    print(p);
-  });
-})
+const query = util.promisify(connection.query).bind(connection);
+
+const fetchall = async () => {
+    return new Promise((resolve, reject) => {
+        connection.query('SELECT * FROM parts', function (err, rows) {
+            if (err) reject(err);
+            else resolve(rows);
+        });
+    });
+};
+
+app.get('/api/data', (req, res) => {
+    console.log('This prints to the console running in the server when the button is clicked');
+});
+
+app.get('/api/collect', async (req, res) => {
+    console.log('This collects all parts');
+    const partArray = [];
+    try {
+        const data = await fetchall();
+        
+        for (let i = 0; i < data.length; i++) {
+            
+        //    console.log('Current data:', data[i].description);
+
+            partArray.push({
+                name: data[i].description,
+                img: data[i].pictureURL,
+                price: data[i].price
+            });
+
+           // console.log(partArray[i]);
+        }
+
+
+
+        res.send(partArray);
+
+    } catch (error) {
+        throw error;
+    }
+});
 
 app.listen(port, () => {
     console.log(`Express server listening at http://localhost:${port}`)
@@ -59,8 +102,6 @@ var orderdb = new sqlite3.Database(dbpath, sqlite3.OPEN_READWRITE,  (err) => {
    }
   
     console.log("successfuly connected to order database");
-    insertOrder(p, orderdb);
-    print(p);
     });
 
 //inset orders into order db
