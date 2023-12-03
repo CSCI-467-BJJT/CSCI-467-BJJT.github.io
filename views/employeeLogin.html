@@ -34,12 +34,12 @@
   <!-- Main content -->
   <div class="container">
     <div id="toggleLogin">
-      <h2>This is the {{ checkbox }} page</h2>
+      <h2>This is the {{ !checkbox ? 'Employee' : 'Admin' }} page</h2>
 
       <div class="form-check form-switch">
-        <label class="form-check-label" {{ checkbox ? 'Employee' : 'Admin' }}>
+        <label class="form-check-label">
           <input class="form-check-input" :class="classObject" type="checkbox" @click="toggleCheckbox" />
-          {{ checkbox }}
+          {{ !checkbox ? 'Employee' : 'Admin' }}
         </label>
       </div>
     </div>
