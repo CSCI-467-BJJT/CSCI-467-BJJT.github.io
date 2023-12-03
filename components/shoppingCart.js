@@ -2,13 +2,26 @@ $(document).ready(function () {
   const cart = Vue.createApp({
     data() {
       return {
+        cartItems,
         cartTotal: 0,
-        cartItems: [
-          {name: 'Engine Block', quantity: '2', price: 100.87},
-          {name: 'Seat', quantity: '1', price: 350.53}
-        ]
       }
     },
+
+    computed: {
+      total() {
+        return this.getPrice(this.cartItems);
+      }
+    },
+
+    watch: {
+      cartItems: {
+        handler: function () {
+          this.cartTotal = this.total;
+        },
+        deep: true,
+      },
+    },
+
     template: `
     <div class="card border-0">
       <div class="card-body">
@@ -53,14 +66,26 @@ $(document).ready(function () {
         </table>
       </div>
 
-      <div class="card-footer bg-transparent border-0 mx-auto">
-        <button type="button" class="btn btn-primary btn-block btn-lg">Checkout \${{ cartTotal }}</button>
+      <div class="card-footer bg-transparent border-0 mx-auto" id="cart">
+        <button type="button" class="btn btn-primary btn-block btn-lg">Checkout \${{ cartTotal.toFixed(2) }}</button>
       </div>
 
     </div>
     `,
-    methods() {
 
+    methods: {
+      getPrice: function (cart) {
+      let cartTotal = 0;
+
+      for (var i = 0; i < cart.length; i++) {
+        cartTotal += cart[i].price;
+      }
+      return cartTotal
+      },
+    },
+
+    created() {
+      this.cartTotal = this.getPrice(this.cartItems);
     }
-  }).mount('#cart');
+}).mount('#cart');
 });
