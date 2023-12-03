@@ -12,7 +12,7 @@
   <!-- Navigation bar -->
   <nav class="navbar navbar-dark bg-dark">
     <div class="container-fluid">
-      <a class="navbar-brand" href="/index.html">Wheely Good Auto Parts</a>
+      <a class="navbar-brand" href="/views/index.html">Wheely Good Auto Parts</a>
 
       <!-- Grabs the pages needed to be displayed on the navbar -->
       <div class="offcanvas-body" id="navbarComponents">
@@ -33,15 +33,15 @@
 
   <!-- Main content -->
   <div class="container">
-    <div>
-      <!-- <h1>{{ pages[activePage].pageTitle }}</h1>
-      <p>{{ pages[activePage].content }}</p> -->
-      <p>This is the employee page</p>
-    </div>
+    <div id="toggleLogin">
+      <h2>This is the {{ checkbox }} page</h2>
 
-    <div class="form-check form-switch">
-      <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault">
-      <label class="form-check-label" for="flexSwitchCheckDefault">Employee</label>
+      <div class="form-check form-switch">
+        <label class="form-check-label" {{ checkbox ? 'Employee' : 'Admin' }}>
+          <input class="form-check-input" :class="classObject" type="checkbox" @click="toggleCheckbox" />
+          {{ checkbox }}
+        </label>
+      </div>
     </div>
 
     <form>
@@ -71,4 +71,5 @@
   <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
   <!-- Components -->
   <script src="/components/navbarComponents.js"></script>
+  <script src="/components/toggleLogin.js"></script>
 </html>
