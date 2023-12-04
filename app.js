@@ -13,6 +13,9 @@ const cors = require('cors');
 var port = process.env.PORT || 3000;
 
 app.use(cors());
+app.use(express.json());
+
+let cart = [];
 
 // Create a connection to the database
 const connection = mysql.createConnection({
@@ -54,6 +57,23 @@ const fetchall = async () => {
 
 app.get('/api/data', (req, res) => {
     console.log('This prints to the console running in the server when the button is clicked');
+});
+
+app.post('/api/cart', (req, res) => {
+    console.log("made it here yuppe")
+    const cartItems = req.body;
+    if(cartItems.length == 1) {
+        cart = [];
+        cart[0] = cartItems[0];
+    }
+    else {
+        console.log(cartItems[cartItems.length - 1]);
+        cart.push(cartItems[cartItems.length - 1]);
+    }
+});
+
+app.get('/api/obtainCart', (req, res) => {
+    res.send(cart);
 });
 
 app.get('/api/collect', async (req, res) => {

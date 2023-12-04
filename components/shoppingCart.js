@@ -67,7 +67,9 @@ $(document).ready(function () {
       </div>
 
       <div class="card-footer bg-transparent border-0 mx-auto" id="cart">
-        <button type="button" class="btn btn-primary btn-block btn-lg">Checkout \${{ cartTotal.toFixed(2) }}</button>
+        <a href="/views/checkout.html">
+          <button type="button" class="btn btn-primary btn-block btn-lg">Checkout \${{ cartTotal.toFixed(2) }}</button>
+        </a>
       </div>
 
     </div>
@@ -86,6 +88,6 @@ $(document).ready(function () {
 
     created() {
       this.cartTotal = this.getPrice(this.cartItems);
-    }
+    },
 }).mount('#cart');
 });
