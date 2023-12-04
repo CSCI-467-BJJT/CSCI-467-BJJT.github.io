@@ -49,7 +49,7 @@ $(document).ready(function () {
                     <i class="fas fa-minus"></i>
                   </button>
 
-                  <input id="form1" min="0" name="quantity" :value="items.quantity" type="number"
+                  <input id="form1" min="0" name="quantity" v-model="items.quantity" :value="items.quantity" type="number"
                     class="form-control form-control-sm" style="width: 50px;" />
 
                   <button class="btn btn-link px-2"
@@ -59,7 +59,7 @@ $(document).ready(function () {
                 </div>
               </td>
               <td class="align-middle">
-                <p class="mb-0" style="font-weight: 500;">\${{ items.price }}</p>
+                <p class="mb-0" style="font-weight: 500;">\${{ items.price * items.quantity }}</p>
               </td>
             </tr>
           </tbody>
@@ -80,7 +80,7 @@ $(document).ready(function () {
       let cartTotal = 0;
 
       for (var i = 0; i < cart.length; i++) {
-        cartTotal += cart[i].price;
+        cartTotal += cart[i].price * cart[i].quantity;
       }
       return cartTotal
       },
