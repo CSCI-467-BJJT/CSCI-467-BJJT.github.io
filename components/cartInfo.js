@@ -17,6 +17,7 @@ $(document).ready(function () {
   
           for (let i = 0; i < parts.length; i++) {
             this.cartItems[i] = parts[i];
+            this.cartTotal += (parts[i].price * parts[i].quantity);
         }
   
         } catch (error) {
