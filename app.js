@@ -60,16 +60,26 @@ app.get('/api/data', (req, res) => {
 });
 
 app.post('/api/cart', (req, res) => {
-    console.log("made it here yuppe")
     const cartItems = req.body;
-    if(cartItems.length == 1) {
-        cart = [];
-        cart[0] = cartItems[0];
+
+    cart = []
+    for (var i = 0; i < cartItems.length; i++) {
+        console.log(cartItems[i]);
+        cart.push(cartItems[i]);
     }
-    else {
-        console.log(cartItems[cartItems.length - 1]);
-        cart.push(cartItems[cartItems.length - 1]);
+
+    res.json({ message: 'Data received successfully'});
+});
+
+app.post('/api/quantity', (req, res) => {
+    const cartItems = req.body;
+
+    cart = []
+    for (var i = 0; i < cartItems.length; i++) {
+        console.log(cartItems[i]);
+        cart.push(cartItems[i]);
     }
+    res.json({ message: 'Data received successfully'});
 });
 
 app.get('/api/obtainCart', (req, res) => {
