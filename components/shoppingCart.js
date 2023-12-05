@@ -10,6 +10,9 @@ $(document).ready(function () {
     computed: {
       total() {
         return this.getPrice(this.cartItems);
+      },
+      quantity() {
+        return this.getQuantity(this.cartItems)        
       }
     },
 
@@ -17,6 +20,13 @@ $(document).ready(function () {
       cartItems: {
         handler: function () {
           this.cartTotal = this.total;
+          const quants = this.quantity;
+
+          for (var i = 0; i < quants.length; i++) {
+            (this.cartItems)[i].quantity = quants[i];
+            this.$forceUpdate();
+          }
+          this.transfer(this.cartItems);
         },
         deep: true,
       },
@@ -34,7 +44,7 @@ $(document).ready(function () {
             </tr>
           </thead>
           <tbody>
-            <tr v-for="items in cartItems">
+            <tr v-for="(items, index) in cartItems">
               <th scope="row">
                 <div class="d-flex align-items-center">
                   <div class="flex-column ms-4">
@@ -45,15 +55,15 @@ $(document).ready(function () {
               <td class="align-middle">
                 <div class="d-flex flex-row">
                   <button class="btn btn-link px-2"
-                    onclick="decrementQuantity(items)">
+                    onclick="this.parentNode.querySelector('input[type=number]').stepDown()">
                     <i class="fas fa-minus"></i>
                   </button>
 
-                  <input id="form1" min="0" name="quantity" v-model="items.quantity" :value="items.quantity" type="number"
+                  <input id="form1" min="0" name="quantity" v-model.number="items.quantity" type="number"
                     class="form-control form-control-sm" style="width: 50px;" />
 
                   <button class="btn btn-link px-2"
-                    onclick="incrementQuantity(items)">
+                    onclick="this.parentNode.querySelector('input[type=number]').stepUp()">
                     <i class="fas fa-plus"></i>
                   </button>
                 </div>
@@ -85,21 +95,37 @@ $(document).ready(function () {
       return cartTotal
       },
 
-      incrementQuantity(item) {
-        item.quantity++;
-        item.price = item.price * item.quantity;
-        console.log(item.quantity)
+      getQuantity: function(cart) {
+          quantity = [];
+
+          for (var i = 0; i < cart.length; i++) {
+            quantity.push(cart[i].quantity);
+          }
+          return quantity;
       },
-      decrementQuantity(item) {
-        if (item.quantity > 0) {
-          item.quantity--;
-        }
-        item.price = item.price * item.quantity;
-      },
+
+      transfer: async function(cart){
+        try {
+            const response = await axios.post('http://localhost:3000/api/quantity', Array.from(cart), {
+            headers: {
+              'Content-Type': 'application/json',
+          },
+        });
+            console.log("response:", response.data);
+        } catch(error){
+            console.error("Error transfering cart to backend", error);
+          }
+     },
     },
 
     created() {
       this.cartTotal = this.getPrice(this.cartItems);
+      quants = this.getQuantity(this.cartItems);
+
+      for (var i = 0; i < quants.length; i++) {
+        this.cartItems[i].quantity = quants[i];
+        this.$forceUpdate();
+      }
     },
 }).mount('#cart');
 });

@@ -11,12 +11,13 @@ $(document).ready(function () {
     },
 
     methods: {
-      addCart: function(name, quantity, price) {
+      addCart: function(name, quantity, price, img) {
         const part = 
         {
           name: name,
           quantity: quantity,
-          price: Number(price)
+          price: Number(price),
+          img: img
 
         };
 
@@ -26,7 +27,6 @@ $(document).ready(function () {
 
       transfer: async function(cart){
         try {
-            console.log(Array.from(cart));
             const response = await axios.post('http://localhost:3000/api/cart', Array.from(cart), {
             headers: {
               'Content-Type': 'application/json',
@@ -48,6 +48,7 @@ $(document).ready(function () {
         for (let i = 0; i < parts.length; i++) {
           this.products.push(parts[i]);
           this.$forceUpdate();
+          this.cartTotal += parts[i].price;
       }
 
       console.log(this.products);
