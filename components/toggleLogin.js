@@ -24,11 +24,11 @@ $(document).ready(function () {
         },
         login1() {
           // Handle login for Page 1
-          console.log('Login Page 1:', this.username1, this.password1);
+          window.location.href = 'employeeDash.html';
         },
         login2() {
           // Handle login for Page 2
-          console.log('Login Page 2:', this.username2, this.password2);
+          window.location.href = 'adminDash.html'
         }
       },
   }).mount('#toggleLogin');
