@@ -9,6 +9,7 @@ const sqlite3 = require('sqlite3').verbose();
 const mysql = require('mysql');
 const util = require('util');
 const cors = require('cors');
+var nodemailer = require('nodemailer');
 
 var port = process.env.PORT || 3000;
 
@@ -126,6 +127,13 @@ app.post('/api/processOrder', async (req, res) => {
        month = values[4];
        year = values[5];
 
+       total = 0;
+
+       for (var i = 0; i < cart.length; i++) {
+            total += (cart[i].price * cart[i].quantity);
+       }
+       total = total.toFixed(2);
+       
         let numstr = creditCardNumber.toString();
         let CCLength = numstr.length;
 
@@ -134,27 +142,12 @@ app.post('/api/processOrder', async (req, res) => {
             return res.send('INVALID CREDIT CARD NUMBER');
             //kill = true;
         }
-        let section4 = creditCardNumber % 10000;
-
-        creditCardNumber = Math.floor(creditCardNumber / 10000);
-
-        let section3 = creditCardNumber % 10000;
-        creditCardNumber = Math.floor(creditCardNumber / 10000);
-
-        let section2 = creditCardNumber % 10000;
-        creditCardNumber = Math.floor(creditCardNumber / 10000);
-
-        let section1 = creditCardNumber % 10000;
-        creditCardNumber = Math.floor(creditCardNumber / 10000);
-        //Format credit card number
-
-        const CCNum = section1 + " " + section2 + " " + section3 + " " + section4;
 
         var currentDate = month;
         currentDate += `/`;
         currentDate += year;
 
-        console.log(shipAddr, email, CCNum, customerId, currentDate);
+        console.log(shipAddr, email, numstr, customerId, currentDate, total);
 
         const insertOrderPartSQL = 'INSERT INTO CustomerOrder (customerId, orderDate, shipAddr, email, creditCardNumber, creditCardExpDate, status, shippingAmount, totalAmount)' +
         'VALUES (?, ?, ?, ?, ?, ?, "status", 1200.00, 2000.00)';
@@ -164,7 +157,7 @@ app.post('/api/processOrder', async (req, res) => {
         const orderPartStm = newdb.prepare(insertOrderPartSQL);
         const success = orderPartStm.run(customerId, shipAddr, email, formatedCCNUM, `${creditCardExpDate}-1`, total);      
         */
-       orderdb.run(insertOrderPartSQL, [customerId, currentDate, shipAddr, email, CCNum, currentDate], function(err) {     //insert part id
+       orderdb.run(insertOrderPartSQL, [customerId, currentDate, shipAddr, email, numstr, currentDate], function(err) {     //insert part id
         if (err) {
           return console.log(err.message);
         }
@@ -172,20 +165,14 @@ app.post('/api/processOrder', async (req, res) => {
         
         //The JS version of the Php code provided with some changends
         const url = 'http://blitz.cs.niu.edu/CreditCard/';
-        
-        /*  TESTING PURPOSE
-        const creditCardNumber = "6011 1234 4321 1234 ";
-        const customerId = "John Doe ";
-        const creditCardExpDate= "12/2024 ";
-        */
-
+ 
         const data = {
             vendor: 'VE001-99',
             trans: '907-987654321-296',
-            cc: CCNum,
+            cc: numstr,
             name: customerId,
             exp: currentDate,
-            amount: '654.32'
+            amount: total
         };
 
         const options = {
@@ -205,7 +192,8 @@ app.post('/api/processOrder', async (req, res) => {
             return response.json();
         })
         .then(result => {
-            console.log('succss', result);
+            console.log('success', result);
+            emailToUser(email);
         })
         .catch(error => {
             console.error('Error:', error);
@@ -240,23 +228,35 @@ var orderdb = new sqlite3.Database(dbpath, sqlite3.OPEN_READWRITE,  (err) => {
     console.log("successfuly connected to order database");
     });
 
-//inset orders into order db
-function insertOrder(part, db) {
 
-    for (var i = 0; i < part.length; i++) {
-        db.run('INSERT INTO CustomerOrder (orderId, customerId, orderDate, shipAddr, email, creditCardNumber, creditCardExpDate, status, shippingAmount, totalAmount)' +
-                                          'VALUES (?, 1, 1000,"address", "email", 662346234, 2000, "status", 10.00, 20.00)', function(err) {     //insert part id
-            if (err) {
-              return console.log(err.message);
-            }
-        });
-    }
-    return;
- //   runQueries(db);
-}
-//print the parts array
-function print(part) {
-    for (var i = 0; i < part.length; i++) {
-        console.log(part[i].number + part[i].description + part[i].price + part[i].weight + part[i].pictureURL);
-    }
+function emailToUser(email) {
+    const transport = nodemailer.createTransport({
+        service: 'gmail',
+        port: 587,
+        host: 'smtp.gmail.com',
+        auth: {
+            user: 'wheelygoodparts@gmail.com',
+            pass: 'ylpt ihoj jhoi pist'
+        },
+        tls: {
+            rejectUnauthorized: false,
+        },
+    });
+
+    const mail = {
+        from: 'wheelygoodparts@gmail.com',
+        to: email,
+        subject: 'THANK YOU',
+        text: 'Thank you for your order',
+
+    };
+
+    transport.sendMail(mail, function (err, info) {
+        if(err) {
+            console.log(err);
+        }
+        else {
+            console.log(info);
+        }
+    })
 }
