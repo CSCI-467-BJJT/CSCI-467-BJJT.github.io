@@ -46,33 +46,33 @@
 
       <!-- Employee login form -->
     <div v-show="!checkbox">
-      <form>
+      <form @submit.prevent="login1">
         <div class="mb-3">
           <label for="empCred" class="form-label">Enter your Employee credentials</label>
-          <input type="text" class="form-control" id="empCred" aria-describedby="emailHelp" v-model="empUser">
+          <input type="text" class="form-control" id="empCred" v-model="empUser" required>
           <div id="emailHelp" class="form-text">We'll never share your email with anyone else.</div>
         </div>
         <div class="mb-3">
           <label for="empPass" class="form-label">Password</label>
-          <input type="password" class="form-control" id="empPass" v-model="empPassword">
+          <input type="password" class="form-control" id="empPass" v-model="empPassword" required>
         </div>
-        <button type="submit" class="btn btn-primary" @click="login1">Login</button>
+        <button type="submit" class="btn btn-primary">Login</button>
       </form>
     </div>
 
     <!-- Admin login form -->
     <div v-show="checkbox">
-      <form>
+      <form @submit.prevent="login2">
         <div class="mb-3" >
           <label for="adminCred" class="form-label">Enter your Admin credentials</label>
-          <input type="text" class="form-control" id="adminCred" aria-describedby="emailHelp" v-model="adminUser">
+          <input type="text" class="form-control" id="adminCred" v-model="adminUser" required>
           <div id="emailHelp" class="form-text">We'll never share your email with anyone else.</div>
         </div>
         <div class="mb-3">
           <label for="adminPass" class="form-label">Password</label>
-          <input type="password" class="form-control" id="adminPass" v-model="adminPassword">
+          <input type="password" class="form-control" id="adminPass" v-model="adminPassword" required>
         </div>
-        <button type="submit" class="btn btn-primary" @click="login2">Login</button>
+        <button type="submit" class="btn btn-primary">Login</button>
       </form>
     </div>
     </div>

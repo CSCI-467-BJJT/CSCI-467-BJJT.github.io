@@ -3,41 +3,31 @@ $(document).ready(function () {
       data() {
         return {
             checkbox: false,
-            empUser: '',
-            empPassword: '',
-            adminUser: '',
-            adminPassword: '',
-            loggedinUser: null
+            empUser: null,
+            empPassword: null,
+            adminUser: null,
+            adminPassword: null,
+            loggedIn: null,
         }
       },
-      // computed: {
-      //   classObject() {
-      //       return {
-      //           'Employee': !this.checkbox,
-      //           'Admin': this.checkbox,
-
-      //       }
-      //   }
-      // },
       methods: {
         toggleCheckbox() {
             this.checkbox = !this.checkbox;
         },
         login1() {
-          // Handle login for Page 1
-          if(empUser[0] == 'w' || 'W')
-          {
-            window.location.href = 'employeeDash.html';
-          }
-          else if(empUser[0] == 'r' || 'R')
-          {
-            
-          }
+          //Handle login for Page 1
+          this.loggedIn = true;
+          console.log(this.empUser)
+          console.log(this.empPassword)
+          window.location.href = '/views/warehouseDash.html';
           
         },
         login2() {
           // Handle login for Page 2
-          window.location.href = 'adminDash.html'
+          this.loggedIn = true;
+          console.log(this.adminUser)
+          console.log(this.adminPassword)
+          window.location.assign('/views/adminDash.html');
         }
       },
   }).mount('#toggleLogin');
