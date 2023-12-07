@@ -25,19 +25,27 @@ $(document).ready(function () {
         },
         login1() {
           // Handle login for Page 1
-          if(empUser[0] == 'w' || 'W')
+          const firstCharacter = this.empUser.charAt(0)
+
+          if(firstCharacter === 'w' || 'W')
           {
-            window.location.href = 'employeeDash.html';
+            console.log(this.empUser)
+            console.log(this.empPassword)
+            window.location.href = '/views/warehouseDash.html';
           }
-          else if(empUser[0] == 'r' || 'R')
+          else if(firstCharacter === 'r' || 'R')
           {
-            
+            window.location.href = '/views/index.html';
+          }
+          else
+          {
+            console.log("please enter a valid username")
           }
           
         },
         login2() {
           // Handle login for Page 2
-          window.location.href = 'adminDash.html'
+          window.location.href = '/views/adminDash.html';
         }
       },
   }).mount('#toggleLogin');
