@@ -2,7 +2,7 @@ $(document).ready(function () {
     Vue.createApp({
       data() {
         return {
-          orders: []
+          orders: [],
         };
   
       },
