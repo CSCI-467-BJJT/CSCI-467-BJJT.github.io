@@ -8,7 +8,23 @@
     <script src="https://unpkg.com/vue@3"></script>
 </head>
 <body>
-    <h1>This is the employee dashboard</h1>
+    <div class="container">
+        <h2>Remember to pack items carefully!</h5>
+        <!-- Bare bones order card group-->
+        <div class="row row-cols-1 row-cols-md-4 g-1" id="cardProducts">
+            <div v-for="product in products" class="col">
+                <div class="card border-2 h-100">
+                    <div class="card-body">
+                        <h4 class="card-title">{{ order.name }}</h4>
+                        <h5 class="text-body-secondary">${{ order.description }}</h5>
+                    </div>
+                    <div class="card-footer border-0 bg-transparent mx-auto">
+                    <a href="#" class="btn btn-primary align" @click="viewOrder(order.name)">Print Packing List</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </body>
 
 <!-- Bootstrap JavaScript Libraries -->
@@ -23,5 +39,4 @@ crossorigin="anonymous"></script>
 <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
 <!-- Components -->
 <script src="/components/navbarComponents.js"></script>
-<script src="/components/toggleLogin.js"></script>
 </html>
