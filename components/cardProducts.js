@@ -11,13 +11,14 @@ $(document).ready(function () {
     },
 
     methods: {
-      addCart: function(name, quantity, price, img) {
+      addCart: function(name, quantity, price, img, partNum) {
         const part = 
         {
           name: name,
           quantity: quantity,
           price: Number(price),
-          img: img
+          img: img,
+          partNum: partNum
 
         };
 
@@ -37,7 +38,7 @@ $(document).ready(function () {
             console.error("Error transfering cart to backend", error);
           }
      },
-    },
+    },  
 
     created() {
       (async () => {

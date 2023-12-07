@@ -17,6 +17,7 @@ app.use(cors());
 app.use(express.json());
 
 let cart = [];
+var orderCount = 1;
 
 // Create a connection to the database
 const connection = mysql.createConnection({
@@ -66,6 +67,8 @@ app.post('/api/cart', (req, res) => {
     cart = []
     for (var i = 0; i < cartItems.length; i++) {
         cart.push(cartItems[i]);
+        //degubTool console.log(cartItems[i].description, cartItems[i].partNum, cartItems[i].price);
+
     }
 
     res.json({ message: 'Data received successfully'});
@@ -97,7 +100,8 @@ app.get('/api/collect', async (req, res) => {
             partArray.push({
                 name: data[i].description,
                 img: data[i].pictureURL,
-                price: data[i].price
+                price: data[i].price,
+                partNum: data[i].number
             });
 
            // console.log(partArray[i]);
@@ -148,21 +152,8 @@ app.post('/api/processOrder', async (req, res) => {
         currentDate += year;
 
         console.log(shipAddr, email, numstr, customerId, currentDate, total);
+        addOrderNum(customerId, currentDate, shipAddr, email, numstr, currentDate, total);
 
-        const insertOrderPartSQL = 'INSERT INTO CustomerOrder (customerId, orderDate, shipAddr, email, creditCardNumber, creditCardExpDate, status, shippingAmount, totalAmount)' +
-        'VALUES (?, ?, ?, ?, ?, ?, "status", 1200.00, 2000.00)';
-
-        //Prepare and excute SQL statement
-        /*
-        const orderPartStm = newdb.prepare(insertOrderPartSQL);
-        const success = orderPartStm.run(customerId, shipAddr, email, formatedCCNUM, `${creditCardExpDate}-1`, total);      
-        */
-       orderdb.run(insertOrderPartSQL, [customerId, currentDate, shipAddr, email, numstr, currentDate], function(err) {     //insert part id
-        if (err) {
-          return console.log(err.message);
-        }
-    });
-        
         //The JS version of the Php code provided with some changends
         const url = 'http://blitz.cs.niu.edu/CreditCard/';
  
@@ -194,6 +185,8 @@ app.post('/api/processOrder', async (req, res) => {
         .then(result => {
             console.log('success', result);
             emailToUser(email);
+            printCustOrder();
+
         })
         .catch(error => {
             console.error('Error:', error);
@@ -259,4 +252,54 @@ function emailToUser(email) {
             console.log(info);
         }
     })
+}
+
+
+function printCustOrder(){
+
+    let sql1 = `SELECT * FROM CustomerOrder`;
+    let sql2 = `SELECT * FROM OrderItem`;
+
+    orderdb.all(sql1, [], (err, rows) => {
+        if (err) {
+          throw err;
+        }console.log(rows);
+       
+      });
+      
+      orderdb.all(sql2, [], (err, rows) => {
+        if (err) {
+          throw err;
+        }console.log(rows)
+
+      });
+}
+
+function addOrderNum(customerId, currentDate, shipAddr, email, numstr, currentDate, total){
+    
+    const insertOrderPartSQL = 'INSERT INTO CustomerOrder (customerId, orderDate, shipAddr, email, creditCardNumber, creditCardExpDate, status, shippingAmount, totalAmount)' +
+        'VALUES (?, ?, ?, ?, ?, ?, "status", 1200.00, ?)';
+
+        //Prepare and excute SQL statement
+        /*
+        const orderPartStm = newdb.prepare(insertOrderPartSQL);
+        const success = orderPartStm.run(customerId, shipAddr, email, formatedCCNUM, `${creditCardExpDate}-1`, total);      
+        */
+       orderdb.run(insertOrderPartSQL, [customerId, currentDate, shipAddr, email, numstr, currentDate, total], function(err) {     //insert part id
+        if (err) {
+          return console.log(err.message);
+        } orderCount++;
+    });
+
+    const insertOrderNumSQL = 'INSERT INTO OrderItem (orderId, partNumber, quantity) VALUES (?, ?, ?)';
+    for(var i = 0; i < cart.length; i++){
+        orderdb.run(insertOrderNumSQL, [orderCount, cart[i].partNum, cart[i].quantity], function(err) {     //insert part id
+            if (err) {
+              return console.log(err.message);
+            }
+        });
+        
+    }
+
+
 }
