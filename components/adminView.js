@@ -2,7 +2,9 @@ $(document).ready(function () {
     Vue.createApp({
       data() {
         return {
-          orders: []
+          orders: [],
+          modalData: [],
+          orderData: []
         };
   
       },
@@ -13,6 +15,9 @@ $(document).ready(function () {
               const response = await axios.post('http://localhost:3000/api/orderItems', {
                 orderId: orderId,
               });
+
+              this.modalData = this.orders[orderId-1];
+              this.orderData = response.data;
 
               console.log(response.data);
             } catch (error) {
