@@ -8,8 +8,11 @@
     <script src="https://unpkg.com/vue@3"></script>
 
     <script>
-      const products = [];  // Define the global products array
+        cartItems = [];
+        const products = [];
+        cartTotal = 0;
     </script>
+     
 </head>
 
 <body>
@@ -43,7 +46,6 @@
         </div>
         <div id="cart"></div>
       </div>
-      
     </div>
   </nav>
 
@@ -82,7 +84,7 @@
             <h5 class="text-body-secondary">${{ product.price }}</h5>
           </div>
           <div class="card-footer border-0 bg-transparent mx-auto">
-            <a href="#" class="btn btn-primary align" @click="addCart(product.name)">Add to Cart</a>
+            <a href="#" class="btn btn-primary align" @click="addCart(product.name, 1, product.price, product.img)">Add to Cart</a>
           </div>
         </div>
       </div>

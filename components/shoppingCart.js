@@ -2,13 +2,36 @@ $(document).ready(function () {
   const cart = Vue.createApp({
     data() {
       return {
+        cartItems,
         cartTotal: 0,
-        cartItems: [
-          {name: 'Engine Block', quantity: '2', price: 100.87},
-          {name: 'Seat', quantity: '1', price: 350.53}
-        ]
       }
     },
+
+    computed: {
+      total() {
+        return this.getPrice(this.cartItems);
+      },
+      quantity() {
+        return this.getQuantity(this.cartItems)        
+      }
+    },
+
+    watch: {
+      cartItems: {
+        handler: function () {
+          this.cartTotal = this.total;
+          const quants = this.quantity;
+
+          for (var i = 0; i < quants.length; i++) {
+            (this.cartItems)[i].quantity = quants[i];
+            this.$forceUpdate();
+          }
+          this.transfer(this.cartItems);
+        },
+        deep: true,
+      },
+    },
+
     template: `
     <div class="card border-0">
       <div class="card-body">
@@ -21,7 +44,7 @@ $(document).ready(function () {
             </tr>
           </thead>
           <tbody>
-            <tr v-for="items in cartItems">
+            <tr v-for="(items, index) in cartItems">
               <th scope="row">
                 <div class="d-flex align-items-center">
                   <div class="flex-column ms-4">
@@ -36,7 +59,7 @@ $(document).ready(function () {
                     <i class="fas fa-minus"></i>
                   </button>
 
-                  <input id="form1" min="0" name="quantity" :value="items.quantity" type="number"
+                  <input id="form1" min="0" name="quantity" v-model.number="items.quantity" type="number"
                     class="form-control form-control-sm" style="width: 50px;" />
 
                   <button class="btn btn-link px-2"
@@ -46,21 +69,63 @@ $(document).ready(function () {
                 </div>
               </td>
               <td class="align-middle">
-                <p class="mb-0" style="font-weight: 500;">\${{ items.price }}</p>
+                <p class="mb-0" style="font-weight: 500;">\${{ (items.price * items.quantity).toFixed(2) }}</p>
               </td>
             </tr>
           </tbody>
         </table>
       </div>
 
-      <div class="card-footer bg-transparent border-0 mx-auto">
-        <button type="button" class="btn btn-primary btn-block btn-lg">Checkout \${{ cartTotal }}</button>
+      <div class="card-footer bg-transparent border-0 mx-auto" id="cart">
+        <a href="/views/checkout.html">
+          <button type="button" class="btn btn-primary btn-block btn-lg">Checkout \${{ cartTotal.toFixed(2) }}</button>
+        </a>
       </div>
 
     </div>
     `,
-    methods() {
 
-    }
-  }).mount('#cart');
+    methods: {
+      getPrice: function (cart) {
+      let cartTotal = 0;
+
+      for (var i = 0; i < cart.length; i++) {
+        cartTotal += cart[i].price * cart[i].quantity;
+      }
+      return cartTotal
+      },
+
+      getQuantity: function(cart) {
+          quantity = [];
+
+          for (var i = 0; i < cart.length; i++) {
+            quantity.push(cart[i].quantity);
+          }
+          return quantity;
+      },
+
+      transfer: async function(cart){
+        try {
+            const response = await axios.post('http://localhost:3000/api/quantity', Array.from(cart), {
+            headers: {
+              'Content-Type': 'application/json',
+          },
+        });
+            console.log("response:", response.data);
+        } catch(error){
+            console.error("Error transfering cart to backend", error);
+          }
+     },
+    },
+
+    created() {
+      this.cartTotal = this.getPrice(this.cartItems);
+      quants = this.getQuantity(this.cartItems);
+
+      for (var i = 0; i < quants.length; i++) {
+        this.cartItems[i].quantity = quants[i];
+        this.$forceUpdate();
+      }
+    },
+}).mount('#cart');
 });
