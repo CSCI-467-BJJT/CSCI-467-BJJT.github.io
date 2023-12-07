@@ -44,19 +44,34 @@
         </div>
 
         <form id="order">
-          <label for="fname">First and Last Name:</label><br>
-          <input type="text" id="fname" name="fname"><br>
+
+          <div class="input-group input-group-lg">
+            <span class="input-group-text" id="inputGroup-sizing-sm">First and Last Name:</span>
+            <input type="text" id="fname" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm">
+          </div>
       
-          <label for="femail">email:</label><br>
-          <input type="text" id="femail" name="femail"><br>
+          <div class="input-group input-group-lg">
+            <span class="input-group-text" id="inputGroup-sizing-sm">Email:</span>
+            <input type="text" id="femail" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm">
+          </div>
+
+          <div class="input-group input-group-lg">
+            <span class="input-group-text" id="inputGroup-sizing-sm">Address:</span>
+            <input type="text" id="faddress" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm">
+          </div>
       
-          <label for="fcard">Card Number:</label><br>
-          <input type="text" id="fcard" name="fcard">
+          <div class="input-group input-group-lg">
+            <span class="input-group-text" id="inputGroup-sizing-sm">Card Number:</span>
+            <input type="text" id="fcard" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm">
+          </div>
+
+          <div class="input-group input-group-lg">
+            <span class="input-group-text" id="inputGroup-sizing-sm">CVC:</span>
+            <input type="text" id="fnumber" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm">
+          </div>
       
-          <br>
-          <label for="month">Card Expiration Month:</label><br>   
-          <input list="months" id="month" name="month">
-          <datalist id="months">
+          <select class="form-select form-select-lg mb-3" aria-label="Expiration Month" id="month">
+            <option selected>Expiration Month</option>
             <option value="01">January</option> 
             <option value="02">February</option> 
             <option value="03">March</option> 
@@ -69,31 +84,23 @@
             <option value="10">October</option> 
             <option value="11">November</option>  
             <option value="12">December</option> 
-          </datalist>
+          </select>
+      
+          <select class="form-select form-select-lg mb-3" aria-label="Expiration Year" id="year">
+            <option selected>Expiration Year</option>
+            <option value="2023">2023</option>
+            <option value="2024">2024</option>
+            <option value="2025">2025</option>
+            <option value="2026">2026</option>
+            <option value="2027">2027</option>
+            <option value="2028">2028</option>
+            <option value="2029">2029</option>
+            <option value="2030">2030</option>
+            <option value="2031">2031</option>
+            <option value="2032">2032</option>
+            <option value="2033">2033</option>
+            </select>
           <br>
-      
-          <label for="year">Card Expiration Year:</label><br>
-          <input list="years" id="year" name="year">
-          <datalist id="years">
-            <option value="2023">
-            <option value="2024">
-            <option value="2025">
-            <option value="2026">
-            <option value="2027">
-            <option value="2028">
-            <option value="2029">
-            <option value="2030">
-            <option value="2031">
-            <option value="2032">
-            <option value="2033">
-          </datalist>
-          <br>
-      
-          <label for="fnumber">CVC:</label><br>
-          <input type="text" id="fnumber" name="fnumber"><br>
-      
-          <label for="faddress">Address:</label><br>
-          <input type="text" id="faddress" name="faddress"><br>
       
           <button id="submitButton" href="#" class="btn btn-primary align" onclick="submitOrder()">Order</button>
         </form>
