@@ -47,7 +47,7 @@
     
     <!-- Bare bones order card group-->
     <div class="row row-cols-1 row-cols-md-4 g-1">
-      <div v-for="order in orders" class="col">
+      <div v-for="order in orders" class="col" :key="order.orderID">
         <div class="card border-2 h-100">
           <div class="card-body">
             <h4 class="card-title">Order#  {{ order.orderId }}</h4>
