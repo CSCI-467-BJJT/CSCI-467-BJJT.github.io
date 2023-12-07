@@ -32,10 +32,17 @@
   <!-- Main content -->
   <div class="container" id="adminView">
     <!-- Shipping and Handeling Charges Changes -->
-    <div>
-      <label for="shippingCharge" class="form-label">Shipping and Handeling Charge (Current is: ${currentShippingCharge})</label>
-      <input type="text" class="form-control" id="empCred" aria-describedby="emailHelp" v-model="empUser">
-      <a id="submitShipping" href="#" class="btn btn-primary align" @click="viewOrder(order.name)">Update Charges</a>
+    <div class="row">
+      <div class="col">
+        <label for="shippingCharge" class="form-label">Shipping and Handeling Charges (Current is: ${currentShippingCharge})</label>
+        <input type="text" class="form-control" id="chargeChange" v-model="">
+        <a id="submitShipping" href="#" class="btn btn-primary align" @click="">Submit Charge Changes</a>
+      </div>
+      <div class="col">
+        <label for="weigthBracket" class="form-label">Weight Bracket (Current is: ${currentWeightBracket})</label>
+        <input type="text" class="form-control" id="weightChange" v-model="">
+        <a id="submitWeight" href="#" class="btn btn-primary align" @click="">Submit Weight Changes</a>
+      </div>
     </div>
     <!-- Bare bones order card group-->
     <div class="row row-cols-1 row-cols-md-4 g-1">
