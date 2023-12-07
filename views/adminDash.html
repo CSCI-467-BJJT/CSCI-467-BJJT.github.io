@@ -8,7 +8,59 @@
     <script src="https://unpkg.com/vue@3"></script>
 </head>
 <body>
-    <h1>This is the Admin Dashboard</h1>
+    <!-- Navigation bar -->
+  <nav class="navbar navbar-dark bg-dark">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="/views/index.html">Wheely Good Auto Parts</a>
+
+      <!-- Grabs the pages needed to be displayed on the navbar -->
+      <div class="offcanvas-body" id="navbarComponents">
+        <ul class="navbar-nav list-group-horizontal">
+          <li v-for="link in links" class="navbar-nav mx-2 px-2">
+            <a 
+            class="nav-link"
+            aria-current="page" 
+            :href="link.url" 
+            :title="`${link.text} page`"
+            >{{ link.text }}</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main content -->
+  <div class="container">
+
+    <!-- Shipping and Handeling Charges Changes -->
+    <div class="row">
+      <div class="col">
+        <label for="shippingCharge" class="form-label">Shipping Charge (Current is: ${currentShippingCharge})</label>
+        <input type="text" class="form-control" id="empCred" aria-describedby="emailHelp" v-model="empUser">
+        <a id="submitShipping" href="#" class="btn btn-primary align" @click="viewOrder(order.name)">Submit Shipping Changes</a>
+      </div>
+      <div class="col">
+        <label for="handelCharge" class="form-label">Handeling Charge (Current is: ${currentHandelingCharge})</label>
+        <input type="text" class="form-control" id="empCred" aria-describedby="emailHelp" v-model="empUser">
+        <a id="submitHandeling" href="#" class="btn btn-primary align" @click="viewOrder(order.name)">Submit Handeling Changes</a>
+      </div>
+    </div>
+
+    <!-- Bare bones order card group-->
+    <div class="row row-cols-1 row-cols-md-4 g-1" id="cardProducts">
+      <div v-for="product in products" class="col">
+        <div class="card border-2 h-100">
+          <div class="card-body">
+            <h4 class="card-title">{{ order.name }}</h4>
+            <h5 class="text-body-secondary">${{ order.description }}</h5>
+          </div>
+          <div class="card-footer border-0 bg-transparent mx-auto">
+            <a href="#" class="btn btn-primary align" @click="viewOrder(order.name)">View Order</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </body>
 
 <!-- Bootstrap JavaScript Libraries -->
@@ -23,5 +75,4 @@ crossorigin="anonymous"></script>
 <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
 <!-- Components -->
 <script src="/components/navbarComponents.js"></script>
-<script src="/components/toggleLogin.js"></script>
 </html>
