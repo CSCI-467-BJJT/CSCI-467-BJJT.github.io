@@ -3,6 +3,7 @@ $(document).ready(function () {
       data() {
         return {
           orders: [],
+          modalData: []
         };
   
       },
@@ -13,6 +14,8 @@ $(document).ready(function () {
               const response = await axios.post('http://localhost:3000/api/orderItems', {
                 orderId: orderId,
               });
+
+              this.modalData = this.orders[orderId-1];
 
               console.log(response.data);
             } catch (error) {
