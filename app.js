@@ -17,7 +17,6 @@ app.use(cors());
 app.use(express.json());
 
 let cart = [];
-var orderCount = 1;
 
 // Create a connection to the database
 const connection = mysql.createConnection({
@@ -39,9 +38,9 @@ connection.connect(error => {
 //grab all part info
 module.exports = {
     getAll: async result => {
-        connection.query("SELECT * FROM parts",  function (err, rows) {
+        connection.query("SELECT * FROM parts",  function (err, data) {
         if (err) throw err;
-        result(rows);
+        result(data);
         });
     }
 }
@@ -50,9 +49,9 @@ const query = util.promisify(connection.query).bind(connection);
 
 const fetchall = async () => {
     return new Promise((resolve, reject) => {
-        connection.query('SELECT * FROM parts', function (err, rows) {
+        connection.query('SELECT * FROM parts', function (err, data) {
             if (err) reject(err);
-            else resolve(rows);
+            else resolve(data);
         });
     });
 };
@@ -62,36 +61,47 @@ app.get('/api/data', (req, res) => {
 });
 
 //This method takes all of the orders from the customers order table in the order db and returns them in an array
-app.get('/api/adminOC', (req, res) => {
-    
-    order = [];
-    
-    //PUSH ROWS INTO ARRAY
-    let sql1 = `SELECT * FROM CustomerOrder`;
-    
-    orderdb.all(sql1, [], (err, rows) => {
-        if (err) {
-          throw err;
-        }
-       
-      });
+app.get('/api/adminOC', async (req, res) => {
+   
+    try {
+        const order = await getOrderData();
 
-      for(var i = 0; i < rows.length; i++){
-        order.push({
-            orderId: rows[i].orderId,
-            customerId: rows[i].customerId,
-            orderDate: rows[i].orderDate,
-            shipAddr: rows[i].shipAddr,
-            email: rows[i].email,
-            creditCardNumber: rows[i].creditCardNumber,
-            creditCardExpDate: rows[i].creditCardExpDate,
-            status: rows[i].status,
-            shippingAmount: rows[i].shippingAmount,
-            totalAmount: rows[i].totalAmount
-        })
-    } res.send(order);
+        res.send(order);
+    } catch(error) {
+        console.error('Error finding order data', error)
+    }
+});
 
-})
+const getOrderData = () => {
+    return new Promise((resolve, reject) => {
+        const order = [];
+
+        let sql = `SELECT * FROM CustomerOrder`;
+
+        orderdb.all(sql, [], (err, rows) => {
+            if (err) {
+                reject(err);
+            } else {
+                for (var i = 0; i < rows.length; i++) {
+                    order.push({
+                        orderId: rows[i].orderId,
+                        customerId: rows[i].customerId,
+                        total: rows[i].totalAmount,
+                        date: rows[i].orderDate,
+                        address: rows[i].shipAddr,
+                        email: rows[i].email,
+                        ccnum: rows[i].creditCardNumber,
+                        ccexp: rows[i].creditCardExpDate,
+                        status: rows[i].status,
+                        shipam: rows[i].shippingAmount,
+                        totam: rows[i].totalAmount
+                    });
+                }
+                resolve(order);
+            }
+        });
+    });
+};
 
 app.post('/api/cart', (req, res) => {
     const cartItems = req.body;
@@ -105,6 +115,57 @@ app.post('/api/cart', (req, res) => {
 
     res.json({ message: 'Data received successfully'});
 });
+
+app.post('/api/cart', (req, res) => {
+    const cartItems = req.body;
+
+    cart = []
+    for (var i = 0; i < cartItems.length; i++) {
+        cart.push(cartItems[i]);
+        //degubTool console.log(cartItems[i].description, cartItems[i].partNum, cartItems[i].price);
+
+    }
+
+    res.json({ message: 'Data received successfully'});
+});
+
+app.post('/api/OrderItems', async (req, res) => {
+    var id = req.body;
+    items = []
+
+    try {
+        items = await getitemdata(id);
+        res.send(items);
+    } catch (error) {
+        console.error(error)
+    }
+});
+
+
+
+const getitemdata = (id) => {
+    return new Promise((resolve, reject) => {
+        const item = [];
+        idnum = id.orderId
+        console.log(idnum);
+        let sql = 'SELECT * FROM OrderItem WHERE orderId = ' + idnum.toString();
+
+        orderdb.all(sql, [], (err, rows) => {
+            if (err) {
+                reject(err);
+            } else {
+                for (var i = 0; i < rows.length; i++) {
+                    item.push({
+                        orderId: rows[i].orderId,
+                        num: rows[i].partNumber,
+                        quantity: rows[i].quantity,
+                    });
+                }
+                resolve(item);
+            }
+        });
+    });
+};
 
 app.post('/api/quantity', (req, res) => {
     const cartItems = req.body;
@@ -292,17 +353,17 @@ function printCustOrder(){
     let sql1 = `SELECT * FROM CustomerOrder`;
     let sql2 = `SELECT * FROM OrderItem`;
 
-    orderdb.all(sql1, [], (err, rows) => {
+    orderdb.all(sql1, [], (err, data) => {
         if (err) {
           throw err;
-        }console.log(rows);
+        }console.log(data);
        
       });
       
-      orderdb.all(sql2, [], (err, rows) => {
+      orderdb.all(sql2, [], (err, data) => {
         if (err) {
           throw err;
-        }console.log(rows)
+        }console.log(data)
 
       });
 }
@@ -320,16 +381,16 @@ function addOrderNum(customerId, currentDate, shipAddr, email, numstr, currentDa
        orderdb.run(insertOrderPartSQL, [customerId, currentDate, shipAddr, email, numstr, currentDate, total], function(err) {     //insert part id
         if (err) {
           return console.log(err.message);
-        } orderCount++;
-    });
+        } const orderId = this.lastID;
 
-    const insertOrderNumSQL = 'INSERT INTO OrderItem (orderId, partNumber, quantity) VALUES (?, ?, ?)';
-    for(var i = 0; i < cart.length; i++){
-        orderdb.run(insertOrderNumSQL, [orderCount, cart[i].partNum, cart[i].quantity], function(err) {     //insert part id
-            if (err) {
-              return console.log(err.message);
-            }
-        });
-        
-    }
+        const insertOrderNumSQL = 'INSERT INTO OrderItem (orderId, partNumber, quantity) VALUES (?, ?, ?)';
+        for(var i = 0; i < cart.length; i++){
+            orderdb.run(insertOrderNumSQL, [orderId, cart[i].partNum, cart[i].quantity], function(err) {     //insert part id
+                if (err) {
+                  return console.log(err.message);
+                }
+            });
+        }    
+    });
 }
+
