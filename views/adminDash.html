@@ -57,8 +57,32 @@
             <h5 class="text-body-secondary">Shipping/Handeling: {{ order.shipam }}  Total: {{ order.totam }}</h5>
           </div>
           <div class="card-footer border-0 bg-transparent mx-auto">
-            <a href="#" class="btn btn-primary align" @click="viewOrder(order.orderId)">View Order</a>
+            <a href="#" class="btn btn-primary align" @click="viewOrder(order.orderId)" data-bs-toggle="modal" data-bs-target="#viewModal">View Order</a>
           </div>
+
+          <!-- Modal -->
+          <div class="modal fade" id="viewModal" tabindex="-1" aria-labelledby="viewModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                  <h4 class="card-title">Order#  {{ order.orderId }}</h4>
+                  <h5 class="text-body-secondary">Name: {{ order.customerId }} Address: {{ order.address }}</h5>
+                  <h5 class="text-body-secondary">Total: {{ order.total }}   Date: {{ order.date }}</h5>
+                  <h5 class="text-body-secondary">Email: {{ order.email }}   Status: {{ order.status }}</h5>
+                  <h5 class="text-body-secondary">CC Number: {{ order.ccnum }}  CC EXP {{ order.ccexp }} </h5>
+                  <h5 class="text-body-secondary">Shipping/Handeling: {{ order.shipam }}  Total: {{ order.totam }}</h5>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+              </div>
+            </div>
+          </div>
+          
         </div>
       </div>
     </div>
