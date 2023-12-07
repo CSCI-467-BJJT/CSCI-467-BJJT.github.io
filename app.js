@@ -61,6 +61,38 @@ app.get('/api/data', (req, res) => {
     console.log('This prints to the console running in the server when the button is clicked');
 });
 
+//This method takes all of the orders from the customers order table in the order db and returns them in an array
+app.get('/api/adminOC', (req, res) => {
+    
+    order = [];
+    
+    //PUSH ROWS INTO ARRAY
+    let sql1 = `SELECT * FROM CustomerOrder`;
+    
+    orderdb.all(sql1, [], (err, rows) => {
+        if (err) {
+          throw err;
+        }
+       
+      });
+
+      for(var i = 0; i < rows.length; i++){
+        order.push({
+            orderId: rows[i].orderId,
+            customerId: rows[i].customerId,
+            orderDate: rows[i].orderDate,
+            shipAddr: rows[i].shipAddr,
+            email: rows[i].email,
+            creditCardNumber: rows[i].creditCardNumber,
+            creditCardExpDate: rows[i].creditCardExpDate,
+            status: rows[i].status,
+            shippingAmount: rows[i].shippingAmount,
+            totalAmount: rows[i].totalAmount
+        })
+    } res.send(order);
+
+})
+
 app.post('/api/cart', (req, res) => {
     const cartItems = req.body;
 
@@ -300,6 +332,4 @@ function addOrderNum(customerId, currentDate, shipAddr, email, numstr, currentDa
         });
         
     }
-
-
 }
