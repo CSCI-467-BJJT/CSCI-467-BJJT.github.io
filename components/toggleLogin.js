@@ -6,7 +6,8 @@ $(document).ready(function () {
             empUser: '',
             empPassword: '',
             adminUser: '',
-            adminPassword: ''
+            adminPassword: '',
+            loggedinUser: null
         }
       },
       computed: {
