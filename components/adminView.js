@@ -3,7 +3,8 @@ $(document).ready(function () {
       data() {
         return {
           orders: [],
-          modalData: []
+          modalData: [],
+          orderData: []
         };
   
       },
@@ -16,6 +17,7 @@ $(document).ready(function () {
               });
 
               this.modalData = this.orders[orderId-1];
+              this.orderData = response.data;
 
               console.log(response.data);
             } catch (error) {

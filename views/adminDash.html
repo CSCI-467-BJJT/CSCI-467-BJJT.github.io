@@ -72,8 +72,10 @@
               <h4 class="card-title">Order#  {{ modalData.orderId }}</h4>
             <h5 class="text-body-secondary">Name: {{ modalData.customerId }} Address: {{ modalData.address }}</h5>
             <h5 class="text-body-secondary">Email: {{ modalData.email }}   Status: {{ modalData.status }}</h5>
-            <h5 class="text-body-secondar">Item</h5>
-            <h5 class="text-body-secondar"></h5>
+            <div v-for="data in orderData">
+              <h5 class="text-body-secondary">Item ID: {{ data.num }}</h5>
+              <h5 class="text-body-secondary">Amount Ordered: {{ data.quantity }}</h5>
+            </div>
             <h5 class="text-body-secondary">Total: ${{ modalData.totam }}</h5>
             </div>
           </div>
