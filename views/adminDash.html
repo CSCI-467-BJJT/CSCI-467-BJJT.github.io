@@ -32,6 +32,11 @@
   <!-- Main content -->
   <div class="container" id="adminView">
     <!-- Shipping and Handeling Charges Changes -->
+    <div>
+      <label for="shippingCharge" class="form-label">Shipping and Handeling Charge (Current is: ${currentShippingCharge})</label>
+      <input type="text" class="form-control" id="empCred" aria-describedby="emailHelp" v-model="empUser">
+      <a id="submitShipping" href="#" class="btn btn-primary align" @click="viewOrder(order.name)">Update Charges</a>
+    </div>
     <!-- Bare bones order card group-->
     <div class="row row-cols-1 row-cols-md-4 g-1">
       <div v-for="order in orders" class="col">
