@@ -29,32 +29,25 @@
 
     </div>
   </nav>
+  <div class="container" id="receivingView">
+    <!-- Shipping and Handeling Charges Changes -->
+    <div class="row">
+      <div class="col">
+        <form id="inventory">
+          <div class="input-group input-group-lg">
+            <span class="input-group-text" id="inputGroup-sizing-sm">Item ID or Description:</span>
+            <input type="text" id="descriptor" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm">
+          </div>
 
-    <div class="container">
+          <div class="input-group input-group-lg">
+            <span class="input-group-text" id="inputGroup-sizing-sm">Quantity to Add:</span>
+            <input type="text" id="quantity" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm">
+          </div>
 
-        <!-- Bare bones order card group-->
-        <div class="row row-cols-1 row-cols-md-4 g-1" id="cardProducts">
-            <div v-for="product in products" class="col">
-                <div class="card border-2 h-100">
-                    <div class="card-body">
-                        <h4 class="card-title">{{ inventory.name }}</h4>
-                        <h5 class="text-body-secondary">${{ inventory.description }}</h5>
-                    </div>
-                    <div class="card-footer border-0 bg-transparent mx-auto">
-                      <div class="row">
-                        <div class="column">
-                          <input id="form1" min="0" name="quantity" v-model.number="inventory.quantity" type="number"
-                          class="form-control form-control-sm" style="width: 50px;"/>
-                        </div>
-                        <div class="column">
-                          <a id="submitChanges" href="#" class="btn btn-primary align" @click="viewOrder(order.name)">Submit Inventory Change</a>
-                        </div>
-                      </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+          <button id="submitButton" href="#" class="btn btn-primary align" @click="insertInventory()">Insert into Inventory</button>
+        </form>
+       </div>
+  </div>
 </body>
 
 <!-- Bootstrap JavaScript Libraries -->
@@ -67,6 +60,8 @@ integrity="sha256-oP6HI9z1XaZNBrJURtCoUT5SUnxFr8s3BzRl+cbzUq8="
 crossorigin="anonymous"></script>
 <!-- Vue.js -->
 <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 <!-- Components -->
 <script src="/components/navbarComponents.js"></script>
+<script src="/components/receivingView.js"></script>
 </html>
