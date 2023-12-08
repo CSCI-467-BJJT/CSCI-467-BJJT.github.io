@@ -6,6 +6,7 @@ $(document).ready(function () {
           orders: [],
           modalData: [],
           orderData: [],
+          searchResults: [],
 
         };
   
