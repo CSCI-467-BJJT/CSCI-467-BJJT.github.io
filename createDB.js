@@ -9,9 +9,9 @@ createTables(db);
 //creates all of the tables for the order database will need to be extended later
 function createTables(newdb) {
     newdb.serialize(() => {
-        newdb.run('CREATE TABLE CustomerOrder (orderId INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, customerId VARCHAR(30) NOT NULL, orderDate DATE NOT NULL,' +
+        newdb.run('CREATE TABLE CustomerOrder (orderId INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, customerId VARCHAR(30) NOT NULL, orderDate VARCHAR(30) NOT NULL,' +
                                                'shipAddr VARCHAR(30) NOT NULL, email VARCHAR(30) NOT NULL, creditCardNumber VARCHAR(16) NOT NULL,' +
-                                               'creditCardExpDate DATE NOT NULL, status VARCHAR(20) NOT NULL, shippingAmount DECIMAL(12,2) NOT NULL,' +
+                                               'creditCardExpDate VARCHAR(30) NOT NULL, status VARCHAR(20) NOT NULL, shippingAmount DECIMAL(12,2) NOT NULL,' +
                                                'totalAmount DECIMAL(12,2) NOT NULL)');
 
 

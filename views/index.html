@@ -8,15 +8,18 @@
     <script src="https://unpkg.com/vue@3"></script>
 
     <script>
-      const products = [];  // Define the global products array
+        cartItems = [];
+        const products = [];
+        cartTotal = 0;
     </script>
+     
 </head>
 
 <body>
   <!-- Navigation bar -->
   <nav class="navbar navbar-dark bg-dark">
     <div class="container-fluid">
-      <a class="navbar-brand" href="/index.html">Wheely Good Auto Parts</a>
+      <a class="navbar-brand" href="/views/index.html">Wheely Good Auto Parts</a>
 
       <!-- Grabs the pages needed to be displayed on the navbar -->
       <div class="offcanvas-body" id="navbarComponents">
@@ -43,15 +46,12 @@
         </div>
         <div id="cart"></div>
       </div>
-      
     </div>
   </nav>
 
   <!-- Main content -->
   <div class="container">
     <div>
-      <!-- <h1>{{ pageTitle }}</h1>
-      <p>{{ content }}</p> -->
       <p>Welcome, We Have Wheely Good Auto Parts :3</p>
     </div>
 
@@ -82,7 +82,7 @@
             <h5 class="text-body-secondary">${{ product.price }}</h5>
           </div>
           <div class="card-footer border-0 bg-transparent mx-auto">
-            <a href="#" class="btn btn-primary align" @click="addCart(product.name)">Add to Cart</a>
+            <a href="#" class="btn btn-primary align" @click="addCart(product.name, 1, product.price, product.img, product.partNum)">Add to Cart</a>
           </div>
         </div>
       </div>
