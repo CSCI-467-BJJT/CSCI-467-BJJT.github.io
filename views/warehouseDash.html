@@ -29,18 +29,24 @@
     </div>
   </nav>
 
-  <div class="container">
+  <div class="container" id="adminView">
     <h2>Remember to pack items carefully!</h5>
     <!-- Bare bones order card group-->
-    <div class="row row-cols-1 row-cols-md-4 g-1" id="cardProducts">
-      <div v-for="product in products" class="col">
+    <div class="row row-cols-1 row-cols-md-4 g-1">
+      <div v-for="order in orders" class="col">
         <div class="card border-2 h-100">
           <div class="card-body">
-            <h4 class="card-title">{{ order.name }}</h4>
-            <h5 class="text-body-secondary">${{ order.description }}</h5>
+            <h4 class="card-title">Order#: {{ order.orderId }}</h4>
+            <h4 class="card-title">Status: {{ order.status }}</h4>
+            <h5 class="text-body-secondary">{{ order.customerId }}</h5>
+            <h4 class="card-title">Packing List:</h4>
+            <div v-for="data in orderData">
+              <h5 class="text-body-secondary">Item ID: {{ data.num }}</h5>
+              <h5 class="text-body-secondary">Amount Ordered: {{ data.quantity }}</h5>
+            </div>
           </div>
           <div class="card-footer border-0 bg-transparent mx-auto">
-            <a href="#" class="btn btn-primary align" @click="viewOrder(order.orderId)" data-bs-toggle="modal" data-bs-target="#viewModal">View Shipping Label</a>
+            <a href="#" class="btn btn-primary align" @click="viewOrder(order.orderId)" data-bs-toggle="modal" data-bs-target="#viewModal">View Shipping Label/Packing List</a>
           </div>
         </div>
       </div>
@@ -72,10 +78,11 @@
                 </div>
               </div>
             </div>
-            <h3 class="card-title">Total: ${{ modalData.totam }}</h3>
+            <h3 class="card-title">Total: ${{ modalData.total }}</h3>
+            <h3 class="card-title">Shipping/Handling: ${{ modalData.shipam }}</h3>
             <input type="text" class="form-control my-2" placeholder="Invoice Note" aria-label="Invoice Note">
             <div class="modal-footer">
-              <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Complete Order</button>
+              <button type="button" class="btn btn-primary" data-bs-dismiss="modal" @click="completeOrder(modalData.orderId)">Complete Order</button>
             </div>
           </div>
         </div>
@@ -95,6 +102,8 @@ integrity="sha256-oP6HI9z1XaZNBrJURtCoUT5SUnxFr8s3BzRl+cbzUq8="
 crossorigin="anonymous"></script>
 <!-- Vue.js -->
 <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 <!-- Components -->
 <script src="/components/navbarComponents.js"></script>
+<script src="/components/adminView.js"></script>
 </html>
