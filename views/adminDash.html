@@ -54,11 +54,6 @@
 
         </form>
        </div>
-      <div class="col">
-        <label for="weigthBracket" class="form-label">Weight Bracket (Current is: {{ currentWeightBracket }})</label>
-        <input type="text" class="form-control" id="weightChange" v-model="">
-        <a id="submitWeight" href="#" class="btn btn-primary align" @click="">Submit Weight Changes</a>
-      </div>
     </div>
     
     <!-- Bare bones order card group-->
@@ -70,6 +65,7 @@
             <h5 class="text-body-secondary">Name: {{ order.customerId }} Address: {{ order.address }}</h5>
             <h5 class="text-body-secondary">Total: ${{ order.total }}</h5>
             <h5 class="text-body-secondary">Shipping/Handling: ${{ order.shipam }}</h5>
+            <h5 class="text-body-secondary">Shipping/Handling: {{ order.date }}</h5>
           </div>
           <div class="card-footer border-0 bg-transparent mx-auto">
             <a href="#" class="btn btn-primary align" @click="viewOrder(order.orderId)" data-bs-toggle="modal" data-bs-target="#viewModal">View Order</a>
@@ -93,7 +89,8 @@
               <h5 class="text-body-secondary">Item ID: {{ data.num }}</h5>
               <h5 class="text-body-secondary">Amount Ordered: {{ data.quantity }}</h5>
             </div>
-            <h5 class="text-body-secondary">Total: ${{ modalData.totam }}</h5>
+            <h5 class="text-body-secondary">Total: ${{ modalData.total }}</h5>
+            <h5 class="text-body-secondary">Shipping/Handling: ${{ modalData.shipam }}</h5>
             </div>
           </div>
         </div>

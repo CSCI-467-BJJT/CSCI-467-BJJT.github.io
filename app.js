@@ -183,20 +183,18 @@ app.get('/api/collect', async (req, res) => {
         
         for (let i = 0; i < data.length; i++) {
             
-        //    console.log('Current data:', data[i].description);
+            const total = await onHand(data[i].number);
 
             partArray.push({
                 name: data[i].description,
                 img: data[i].pictureURL,
                 price: data[i].price,
                 partNum: data[i].number,
-                weight: data[i].weight
+                weight: data[i].weight,
+                amount: total,
             });
 
-           // console.log(partArray[i]);
         }
-
-
 
         res.send(partArray);
 
@@ -213,6 +211,28 @@ app.post('/api/handleShipping', async (req, res) => {
         console.log(value, lower, upper);
 
         addWeightBracket(lower, upper, value);           //add the new bracket into the order database
+    } catch (error) {
+        console.error(error)
+    }
+}),
+
+app.post('/api/handleInventory', async (req, res) => {
+    try{
+        const descriptor= (req.body).descriptor;
+        const quantity = (req.body).quantity;
+
+        addProducts(descriptor, quantity);           //add the new bracket into the order database
+    } catch (error) {
+        console.error(error)
+    }
+}),
+
+app.post('/api/finishOrder', async (req, res) => {
+    try{
+        const id = (req.body).orderId;
+
+
+        changeOrderStatus(id);           //add the new bracket into the order database
     } catch (error) {
         console.error(error)
     }
@@ -268,7 +288,7 @@ app.post('/api/processOrder', async (req, res) => {
         currentDate += year;
 
         console.log(shipAddr, email, numstr, customerId, currentDate, total, shippingtotal);
-        addOrderNum(customerId, currentDate, shipAddr, email, numstr, currentDate, total, shippingtotal);
+        addOrderNum(customerId, currentDate, shipAddr, email, numstr, currentDate, total, shippingtotal, cart);
 
         //The JS version of the Php code provided with some changends
         const url = 'http://blitz.cs.niu.edu/CreditCard/';
@@ -300,7 +320,7 @@ app.post('/api/processOrder', async (req, res) => {
         })
         .then(result => {
             console.log('success', result);
-            emailToUser(email);
+            emailToUser(email, "Order Receieved", "This is a confirmation email letting you know that we have received your order, we will send another email when your order has been shipped, thank you for shopping with us!");
 
         })
         .catch(error => {
@@ -309,6 +329,7 @@ app.post('/api/processOrder', async (req, res) => {
         
         // Handle the response or futher processing needed
         res.send('Order processed sucessfully');
+
     } catch (error){
         // Logs and sends a generic error message for server errors
         console.error('Error:', error.message);
@@ -337,7 +358,7 @@ var orderdb = new sqlite3.Database(dbpath, sqlite3.OPEN_READWRITE,  (err) => {
     });
 
 
-function emailToUser(email) {
+function emailToUser(email, header, body) {
     const transport = nodemailer.createTransport({
         service: 'gmail',
         port: 587,
@@ -354,8 +375,8 @@ function emailToUser(email) {
     const mail = {
         from: 'wheelygoodparts@gmail.com',
         to: email,
-        subject: 'THANK YOU',
-        text: 'Thank you for your order',
+        subject: header,
+        text: body,
 
     };
 
@@ -404,6 +425,38 @@ function printweights() {
       });
 }
 
+function onHand(id) {
+    return new Promise((resolve, reject) => {
+        let sql = 'SELECT quantity FROM Inventory WHERE partNumber = ?';
+
+        orderdb.all(sql, [id], (err, data) => {
+            if (err) {
+                reject(err);
+            } else {
+                const quantity = data[0].quantity;
+                resolve(quantity);
+            }
+        });
+    });
+}
+function changeOrderStatus(id) {
+    const sql = 'UPDATE CustomerOrder SET status = ? WHERE orderId = ?';
+    const query = 'SELECT email FROM CustomerOrder WHERE orderId = ?';
+    orderdb.run(sql, ["shipped", id], function(err) {     //insert part id
+        if (err) {
+            return console.log(err.message);
+        }
+
+        orderdb.all(query, [id], (err, data) => {
+            if (err) {
+              throw err;
+            }console.log(data);
+            let userEmail = data[0].email;
+            emailToUser(userEmail, "Order has been shipped", "Dear customer, you are receiving this message notifying you that your order has been shipped to your address, thank you for shopping with Wheely Good Auto Parts! - Management Team");
+          });
+    }) 
+}
+
 function addWeightBracket(lower, upper, amount) {
     const sql = 'INSERT INTO WeightBracket (lowerWeight, upperWeight, amount)' +
                 'VALUES (?, ?, ?)';
@@ -415,6 +468,67 @@ function addWeightBracket(lower, upper, amount) {
     });
 
     printweights();
+}
+
+function addProducts(descriptor, q) {
+    const sql = 'UPDATE Inventory SET quantity = ? WHERE partNumber = ?';
+    let quantity = parseInt(q);
+    //if partnum
+    if(!isNaN(parseFloat(descriptor)) && isFinite(descriptor)) {
+
+        let query = 'SELECT itemName, quantity FROM Inventory WHERE partNumber = ' + descriptor.toString();
+
+        orderdb.all(query, [], (err, data) => {
+            if (err) {
+              throw err;
+            }console.log(data);
+            let currentQuantity = +data[0].quantity;
+            let newQuantity = currentQuantity + quantity;
+            console.log (typeof currentQuantity);
+            console.log(typeof quantity);
+
+            orderdb.run(sql, [newQuantity, descriptor], function(err) {     //insert part id
+                if (err) {
+                    return console.log(err.message);
+                }
+            }) 
+
+            printInventory();
+           
+          });
+    }
+    //or description
+    else {
+            let query = "SELECT partNumber, quantity FROM Inventory WHERE itemName = '" + descriptor + "'";
+            orderdb.all(query, [], (err, data) => {
+                if (err) {
+                  throw err;
+                }console.log(data);
+                let number = data[0].partNumber;
+                var newQuantity = data[0].quantity + quantity;
+    
+                orderdb.run(sql, [newQuantity, number], function(err) {     //insert part id
+                    if (err) {
+                        return console.log(err.message);
+                    }
+                }) 
+
+                printInventory();
+               
+              });
+    }
+
+}
+
+function printInventory() {
+    let sql = 'SELECT * FROM Inventory';
+
+    orderdb.all(sql, [], (err, data) => {
+        if (err) {
+          throw err;
+        }console.log(data);
+       
+      });
 }
 
 function getshipping(weight) {
@@ -439,17 +553,25 @@ function getshipping(weight) {
     });
 }
 
-function addOrderNum(customerId, currentDate, shipAddr, email, numstr, currentDate, total, weight){
+function addOrderNum(customerId, currentDate, shipAddr, email, numstr, currentDate, total, weight, cart){
     
     const insertOrderPartSQL = 'INSERT INTO CustomerOrder (customerId, orderDate, shipAddr, email, creditCardNumber, creditCardExpDate, status, shippingAmount, totalAmount)' +
-        'VALUES (?, ?, ?, ?, ?, ?, "status", ?, ?)';
+        'VALUES (?, ?, ?, ?, ?, ?, "authorized", ?, ?)';
+
+    const sql = 'UPDATE Inventory SET quantity = ? WHERE partNumber = ?';
+
+    var currentDate = new Date();
+    var month = currentDate.getMonth() + 1;
+    var day = currentDate.getDate();
+
+    var inputDate = month.toString() + "/" + day.toString();
 
         //Prepare and excute SQL statement
         /*
         const orderPartStm = newdb.prepare(insertOrderPartSQL);
         const success = orderPartStm.run(customerId, shipAddr, email, formatedCCNUM, `${creditCardExpDate}-1`, total);      
         */
-       orderdb.run(insertOrderPartSQL, [customerId, currentDate, shipAddr, email, numstr, currentDate, weight, total], function(err) {     //insert part id
+       orderdb.run(insertOrderPartSQL, [customerId, inputDate, shipAddr, email, numstr, currentDate, weight, total], function(err) {     //insert part id
         if (err) {
           return console.log(err.message);
         } const orderId = this.lastID;
@@ -461,7 +583,49 @@ function addOrderNum(customerId, currentDate, shipAddr, email, numstr, currentDa
                   return console.log(err.message);
                 }
             });
-        }    
+        }   
+    });   
+
+        removeFromInventory(cart, sql)
+}
+
+async function removeFromInventory(cart, sql) {
+    const query = "SELECT quantity FROM Inventory WHERE partNumber = ?";
+
+    for (let i = 0; i < cart.length; i++) {
+        try {
+            const data = await getOrderQuantity(cart[i].partNum, query);
+            console.log(data);
+
+            const newQuantity = data[0].quantity - cart[i].quantity;
+
+            await updateInventory(sql, newQuantity, cart[i].partNum);
+        } catch (err) {
+            console.error(err);
+        }
+    }
+}
+
+function getOrderQuantity(partNum, query) {
+    return new Promise((resolve, reject) => {
+        orderdb.all(query, [partNum], (err, data) => {
+            if (err) {
+                reject(err);
+            } else {
+                resolve(data);
+            }
+        });
     });
 }
 
+function updateInventory(sql, newQuantity, partNum) {
+    return new Promise((resolve, reject) => {
+        orderdb.run(sql, [newQuantity, partNum], (err) => {
+            if (err) {
+                reject(err.message);
+            } else {
+                resolve();
+            }
+        });
+    });
+}

@@ -11,20 +11,21 @@ $(document).ready(function () {
     },
 
     methods: {
-      addCart: function(name, quantity, price, img, partNum, weight) {
-        const part = 
-        {
-          name: name,
-          quantity: quantity,
-          price: Number(price),
-          img: img,
-          partNum: partNum,
-          weight: weight
+      addCart: function(name, quantity, price, img, partNum, weight, amount) {
+        if(amount > 0) {
+          const part = 
+          {
+            name: name,
+            quantity: quantity,
+            price: Number(price),
+            img: img,
+            partNum: partNum,
+            weight: weight,
+          };
 
-        };
-
-        this.cartItems.push(part);
-        this.transfer(this.cartItems);
+          this.cartItems.push(part);
+          this.transfer(this.cartItems);
+        }
       },
 
       transfer: async function(cart){
@@ -39,6 +40,7 @@ $(document).ready(function () {
             console.error("Error transfering cart to backend", error);
           }
      },
+
     },  
 
     created() {
