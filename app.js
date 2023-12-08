@@ -17,6 +17,7 @@ app.use(cors());
 app.use(express.json());
 
 let cart = [];
+var shippingtotal;
 
 // Create a connection to the database
 const connection = mysql.createConnection({
@@ -94,7 +95,6 @@ const getOrderData = () => {
                         ccexp: rows[i].creditCardExpDate,
                         status: rows[i].status,
                         shipam: rows[i].shippingAmount,
-                        totam: rows[i].totalAmount
                     });
                 }
                 resolve(order);
@@ -103,28 +103,22 @@ const getOrderData = () => {
     });
 };
 
-app.post('/api/cart', (req, res) => {
+app.post('/api/cart', async (req, res) => {
     const cartItems = req.body;
 
-    cart = []
+    cart = [];
+    shippingtotal = 0;
+    weight = 0;
     for (var i = 0; i < cartItems.length; i++) {
         cart.push(cartItems[i]);
-        //degubTool console.log(cartItems[i].description, cartItems[i].partNum, cartItems[i].price);
-
+        weight += cartItems[i].weight;
     }
 
-    res.json({ message: 'Data received successfully'});
-});
-
-app.post('/api/cart', (req, res) => {
-    const cartItems = req.body;
-
-    cart = []
-    for (var i = 0; i < cartItems.length; i++) {
-        cart.push(cartItems[i]);
-        //degubTool console.log(cartItems[i].description, cartItems[i].partNum, cartItems[i].price);
-
-    }
+    try {
+        shippingtotal = await getshipping(weight);
+       } catch (error) {
+            console.error(error);
+       }
 
     res.json({ message: 'Data received successfully'});
 });
@@ -178,7 +172,8 @@ app.post('/api/quantity', (req, res) => {
 });
 
 app.get('/api/obtainCart', (req, res) => {
-    res.send(cart);
+    const response = {cart, shippingtotal};
+    res.json(response);
 });
 
 app.get('/api/collect', async (req, res) => {
@@ -194,7 +189,8 @@ app.get('/api/collect', async (req, res) => {
                 name: data[i].description,
                 img: data[i].pictureURL,
                 price: data[i].price,
-                partNum: data[i].number
+                partNum: data[i].number,
+                weight: data[i].weight
             });
 
            // console.log(partArray[i]);
@@ -208,6 +204,20 @@ app.get('/api/collect', async (req, res) => {
         throw error;
     }
 });
+
+app.post('/api/handleShipping', async (req, res) => {
+    try{
+        const value = (req.body).amount;
+        const lower = (req.body).lower;
+        const upper = (req.body).upper;
+        console.log(value, lower, upper);
+
+        addWeightBracket(lower, upper, value);           //add the new bracket into the order database
+    } catch (error) {
+        console.error(error)
+    }
+}),
+        
 
 app.post('/api/processOrder', async (req, res) => {
     try{
@@ -226,13 +236,26 @@ app.post('/api/processOrder', async (req, res) => {
 
        total = 0;
 
+       weight = 0;
+
        for (var i = 0; i < cart.length; i++) {
             total += (cart[i].price * cart[i].quantity);
+            weight += (cart[i].weight * cart[i].quantity);
        }
        total = total.toFixed(2);
+       /*
+       let shipping = 0;
        
-        let numstr = creditCardNumber.toString();
-        let CCLength = numstr.length;
+       try {
+        shipping = await getshipping(weight);
+       } catch (error) {
+            console.error(error);
+       }
+       shippingtotal = shipping;
+       */
+       
+       let numstr = creditCardNumber.toString();
+       let CCLength = numstr.length;
 
         //Checks to see if credit card number is the min 16
         if(CCLength !== 16){
@@ -244,8 +267,8 @@ app.post('/api/processOrder', async (req, res) => {
         currentDate += `/`;
         currentDate += year;
 
-        console.log(shipAddr, email, numstr, customerId, currentDate, total);
-        addOrderNum(customerId, currentDate, shipAddr, email, numstr, currentDate, total);
+        console.log(shipAddr, email, numstr, customerId, currentDate, total, shippingtotal);
+        addOrderNum(customerId, currentDate, shipAddr, email, numstr, currentDate, total, shippingtotal);
 
         //The JS version of the Php code provided with some changends
         const url = 'http://blitz.cs.niu.edu/CreditCard/';
@@ -278,7 +301,6 @@ app.post('/api/processOrder', async (req, res) => {
         .then(result => {
             console.log('success', result);
             emailToUser(email);
-            printCustOrder();
 
         })
         .catch(error => {
@@ -347,7 +369,8 @@ function emailToUser(email) {
     })
 }
 
-
+//for debugging use only
+/*
 function printCustOrder(){
 
     let sql1 = `SELECT * FROM CustomerOrder`;
@@ -359,7 +382,7 @@ function printCustOrder(){
         }console.log(data);
        
       });
-      
+    
       orderdb.all(sql2, [], (err, data) => {
         if (err) {
           throw err;
@@ -367,18 +390,66 @@ function printCustOrder(){
 
       });
 }
+*/
 
-function addOrderNum(customerId, currentDate, shipAddr, email, numstr, currentDate, total){
+//for debugging use only
+function printweights() {
+    let sql = 'SELECT * FROM WeightBracket';
+
+    orderdb.all(sql, [], (err, data) => {
+        if (err) {
+          throw err;
+        }console.log(data);
+       
+      });
+}
+
+function addWeightBracket(lower, upper, amount) {
+    const sql = 'INSERT INTO WeightBracket (lowerWeight, upperWeight, amount)' +
+                'VALUES (?, ?, ?)';
+
+    orderdb.run(sql, [lower, upper, amount], function(err) {
+        if(err) {
+            return console.log(err.message)
+        }
+    });
+
+    printweights();
+}
+
+function getshipping(weight) {
+    let sql = 'SELECT * FROM WeightBracket';
+
+    return new Promise((resolve, reject) => {
+        orderdb.all(sql, [], (err, data) => {
+            if (err) {
+                reject(err);
+                return;
+            }
+
+            for (var i = 0; i < data.length; i++) {
+                if (weight >= data[i].lowerWeight && weight <= data[i].upperWeight) {
+                    resolve(data[i].amount);
+                    return;
+                }
+            }
+
+            resolve(0);
+        });
+    });
+}
+
+function addOrderNum(customerId, currentDate, shipAddr, email, numstr, currentDate, total, weight){
     
     const insertOrderPartSQL = 'INSERT INTO CustomerOrder (customerId, orderDate, shipAddr, email, creditCardNumber, creditCardExpDate, status, shippingAmount, totalAmount)' +
-        'VALUES (?, ?, ?, ?, ?, ?, "status", 1200.00, ?)';
+        'VALUES (?, ?, ?, ?, ?, ?, "status", ?, ?)';
 
         //Prepare and excute SQL statement
         /*
         const orderPartStm = newdb.prepare(insertOrderPartSQL);
         const success = orderPartStm.run(customerId, shipAddr, email, formatedCCNUM, `${creditCardExpDate}-1`, total);      
         */
-       orderdb.run(insertOrderPartSQL, [customerId, currentDate, shipAddr, email, numstr, currentDate, total], function(err) {     //insert part id
+       orderdb.run(insertOrderPartSQL, [customerId, currentDate, shipAddr, email, numstr, currentDate, weight, total], function(err) {     //insert part id
         if (err) {
           return console.log(err.message);
         } const orderId = this.lastID;

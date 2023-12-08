@@ -17,7 +17,7 @@ function createTables(newdb) {
 
         newdb.run('CREATE TABLE OrderItem (orderId INTEGER, partNumber INTEGER, quantity INTEGER, PRIMARY KEY (orderId, partNumber), FOREIGN KEY (orderId) REFERENCES CustomerOrder(orderId))');
 
-
+        newdb.run('CREATE TABLE WeightBracket (lowerWeight INTEGER PRIMARY KEY, upperWeight INTEGER, amount INTEGER)');
         newdb.run('CREATE TABLE PackingList (packingListId INTEGER PRIMARY KEY AUTOINCREMENT, orderId INTEGER, packingDate DATE, FOREIGN KEY (orderId) REFERENCES CustomerOrder(orderId))');
 
         newdb.run('CREATE TABLE ShippedOrders(orderId INTEGER PRIMARY KEY, shippingDate DATE, shipperId INTEGER, shippingLable VARCHAR(255), FOREIGN KEY(orderId) REFERENCES CustomerOrder(orderId))');

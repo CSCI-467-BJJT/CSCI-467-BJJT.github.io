@@ -2,9 +2,11 @@ $(document).ready(function () {
     Vue.createApp({
       data() {
         return {
+          currentShippingCharge: 0, 
           orders: [],
           modalData: [],
-          orderData: []
+          orderData: [],
+
         };
   
       },
@@ -21,6 +23,23 @@ $(document).ready(function () {
 
               console.log(response.data);
             } catch (error) {
+              console.error(error.message);
+            }
+        },
+
+       async  insertShipping(){
+            var amount = document.getElementById("shipping").value;
+            var lower =  document.getElementById("lowerweight").value;
+            var upper =  document.getElementById("upperweight").value;
+            try {
+              const response = await axios.post('http://localhost:3000/api/handleShipping', {
+                amount: amount,
+                lower: lower,
+                upper: upper,
+              })
+
+              console.log(response.data);
+            } catch(error) {
               console.error(error.message);
             }
         },

@@ -34,10 +34,26 @@
     <!-- Shipping and Handeling Charges Changes -->
     <div class="row">
       <div class="col">
-        <label for="shippingCharge" class="form-label">Shipping and Handeling Charges (Current is: {{ currentShippingCharge }})</label>
-        <input type="text" class="form-control" id="chargeChange" v-model="">
-        <a id="submitShipping" href="#" class="btn btn-primary align" @click="">Submit Charge Changes</a>
-      </div>
+        <form id="weight">
+          <div class="input-group input-group-lg">
+            <span class="input-group-text" id="inputGroup-sizing-sm">Shipping Charge:</span>
+            <input type="text" id="shipping" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm">
+          </div>
+
+          <div class="input-group input-group-lg">
+            <span class="input-group-text" id="inputGroup-sizing-sm">Lower Weight</span>
+            <input type="text" id="lowerweight" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm">
+          </div>
+
+          <div class="input-group input-group-lg">
+            <span class="input-group-text" id="inputGroup-sizing-sm">Upper Weight</span>
+            <input type="text" id="upperweight" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm">
+          </div>
+
+          <button id="submitButton" href="#" class="btn btn-primary align" @click="insertShipping()">Set Shipping/Handling</button>
+
+        </form>
+       </div>
       <div class="col">
         <label for="weigthBracket" class="form-label">Weight Bracket (Current is: {{ currentWeightBracket }})</label>
         <input type="text" class="form-control" id="weightChange" v-model="">
@@ -53,6 +69,7 @@
             <h4 class="card-title">Order#  {{ order.orderId }}</h4>
             <h5 class="text-body-secondary">Name: {{ order.customerId }} Address: {{ order.address }}</h5>
             <h5 class="text-body-secondary">Total: ${{ order.total }}</h5>
+            <h5 class="text-body-secondary">Shipping/Handling: ${{ order.shipam }}</h5>
           </div>
           <div class="card-footer border-0 bg-transparent mx-auto">
             <a href="#" class="btn btn-primary align" @click="viewOrder(order.orderId)" data-bs-toggle="modal" data-bs-target="#viewModal">View Order</a>

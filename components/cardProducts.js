@@ -11,14 +11,15 @@ $(document).ready(function () {
     },
 
     methods: {
-      addCart: function(name, quantity, price, img, partNum) {
+      addCart: function(name, quantity, price, img, partNum, weight) {
         const part = 
         {
           name: name,
           quantity: quantity,
           price: Number(price),
           img: img,
-          partNum: partNum
+          partNum: partNum,
+          weight: weight
 
         };
 
