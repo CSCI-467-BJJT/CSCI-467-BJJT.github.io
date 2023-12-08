@@ -29,31 +29,16 @@
 
     </div>
   </nav>
-
     <div class="container">
-
-        <!-- Bare bones order card group-->
-        <div class="row row-cols-1 row-cols-md-4 g-1" id="cardProducts">
-            <div v-for="product in products" class="col">
-                <div class="card border-2 h-100">
-                    <div class="card-body">
-                        <h4 class="card-title">{{ inventory.name }}</h4>
-                        <h5 class="text-body-secondary">${{ inventory.description }}</h5>
-                    </div>
-                    <div class="card-footer border-0 bg-transparent mx-auto">
-                      <div class="row">
-                        <div class="column">
-                          <input id="form1" min="0" name="quantity" v-model.number="inventory.quantity" type="number"
-                          class="form-control form-control-sm" style="width: 50px;"/>
-                        </div>
-                        <div class="column">
-                          <a id="submitChanges" href="#" class="btn btn-primary align" @click="viewOrder(order.name)">Submit Inventory Change</a>
-                        </div>
-                      </div>
-                    </div>
-                </div>
-            </div>
+      <div class="row">
+        <div class="col">
+          <input type="text" class="form-control my-2" placeholder="Item ID" aria-label="Item ID" aria-describedby="basic-addon1">
         </div>
+        <div class="col">
+          <input type="text" class="form-control my-2" placeholder="Item Quantity to Add" aria-label="Item Quantity to Add" aria-describedby="basic-addon1">
+        </div>
+      </div>
+      <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Add to Inventory</button>
     </div>
 </body>
 
