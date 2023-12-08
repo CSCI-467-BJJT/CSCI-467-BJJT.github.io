@@ -65,7 +65,7 @@
             <h5 class="text-body-secondary">Name: {{ order.customerId }} Address: {{ order.address }}</h5>
             <h5 class="text-body-secondary">Total: ${{ order.total }}</h5>
             <h5 class="text-body-secondary">Shipping/Handling: ${{ order.shipam }}</h5>
-            <h5 class="text-body-secondary">Shipping/Handling: {{ order.date }}</h5>
+            <h5 class="text-body-secondary">Order Date: {{ order.date }}</h5>
           </div>
           <div class="card-footer border-0 bg-transparent mx-auto">
             <a href="#" class="btn btn-primary align" @click="viewOrder(order.orderId)" data-bs-toggle="modal" data-bs-target="#viewModal">View Order</a>
