@@ -62,18 +62,21 @@
               <div class="col">
                 <h5 class="text-body-secondary">Item ID:</h5>
                 <div v-for="data in orderData">
-                  <h5 class="text-body-secondary">Item ID: {{ data.num }}</h5>
+                  <h5 class="text-body-secondary">{{ data.num }}</h5>
                 </div>
               </div>
               <div class="col">
                 <h5 class="text-body-secondary">Quantity:</h5>
                 <div v-for="data in orderData">
-                  <h5 class="text-body-secondary">Amount Ordered: {{ data.quantity }}</h5>
+                  <h5 class="text-body-secondary">{{ data.quantity }}</h5>
                 </div>
               </div>
             </div>
             <h3 class="card-title">Total: ${{ modalData.totam }}</h3>
             <input type="text" class="form-control my-2" placeholder="Invoice Note" aria-label="Invoice Note">
+            <div class="modal-footer">
+              <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Complete Order</button>
+            </div>
           </div>
         </div>
       </div>
