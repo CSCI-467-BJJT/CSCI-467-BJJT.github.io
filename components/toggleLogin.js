@@ -24,7 +24,6 @@ $(document).ready(function () {
         },
       },
       methods: {
-        
         login1() {
           //Handle login for Page 1 Warehouse
           this.loggedIn = true;
