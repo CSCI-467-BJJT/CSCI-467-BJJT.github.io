@@ -55,9 +55,9 @@
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <div class="modal-body">
-            <h3 class="card-title">Name: {{ modalData.customerId }}</h3>
-            <h3 class="card-title">Shipping Address: {{ modalData.address }}</h3>
-            <h3 class="card-title">Items:</h3>
+            <h3 class="card-title my-2">Name: {{ modalData.customerId }}</h3>
+            <h3 class="card-title my-2">Shipping Address: {{ modalData.address }}</h3>
+            <h3 class="card-title my-2">Items:</h3>
             <div class="row">
               <div class="col">
                 <h5 class="text-body-secondary">Item ID:</h5>
@@ -72,7 +72,8 @@
                 </div>
               </div>
             </div>
-            <h3 class="card-title">Total: ${{ modalData.totam }}</h5>
+            <h3 class="card-title">Total: ${{ modalData.totam }}</h3>
+            <input type="text" class="form-control my-2" placeholder="Invoice Note" aria-label="Invoice Note">
           </div>
         </div>
       </div>
