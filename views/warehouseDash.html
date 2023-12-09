@@ -26,12 +26,14 @@
           </li>
         </ul>
       </div>
+
     </div>
   </nav>
 
   <div class="container" id="adminView">
     <h2>Remember to pack items carefully!</h5>
-    <!-- Bare bones order card group-->
+
+    <!-- Card group to display the orders and basic information -->
     <div class="row row-cols-1 row-cols-md-4 g-1">
       <div v-for="order in orders" class="col">
         <div class="card border-2 h-100">
@@ -52,7 +54,7 @@
       </div>
     </div>
 
-    <!-- Modal -->
+    <!-- Modal to display extra information of the order for the worker -->
     <div class="modal fade" id="viewModal" tabindex="-1" aria-labelledby="viewModalLabel" aria-hidden="true">
       <div class="modal-dialog modal-dialog-centered modal-xl">
         <div class="modal-content">
