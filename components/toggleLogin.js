@@ -38,9 +38,6 @@ $(document).ready(function () {
           alert('Invalid username or password');
         }
 
-        //console.log(this.empUser)
-        //console.log(this.empPassword)
-        //window.location.href = '/views/warehouseDash.html';
         
       },
       login2() {
@@ -57,9 +54,6 @@ $(document).ready(function () {
           alert('Invalid username or password');
         }
 
-        //console.log(this.empUser)
-        //console.log(this.empPassword)
-        //window.location.href = '/views/receivingDash.html'
       },
       login3() {
         // Handle login for Page 3 Admin
@@ -75,9 +69,6 @@ $(document).ready(function () {
           alert('Invalid username or password');
         }
 
-        //console.log(this.adminUser)
-        //console.log(this.adminPassword)
-        //window.location.assign('/views/adminDash.html');
       },
     },
 }).mount('#toggleLogin');

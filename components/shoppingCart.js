@@ -86,6 +86,7 @@ $(document).ready(function () {
     `,
 
     methods: {
+      //get the total price in the cart
       getPrice: function (cart) {
       let cartTotal = 0;
 
@@ -95,6 +96,7 @@ $(document).ready(function () {
       return cartTotal
       },
 
+      //get the quantity of all items in order
       getQuantity: function(cart) {
           quantity = [];
 
@@ -104,6 +106,7 @@ $(document).ready(function () {
           return quantity;
       },
 
+      //transder cart to backend with updated quantity
       transfer: async function(cart){
         try {
             const response = await axios.post('http://localhost:3000/api/quantity', Array.from(cart), {
@@ -118,6 +121,7 @@ $(document).ready(function () {
      },
     },
 
+    //run upon file load
     created() {
       this.cartTotal = this.getPrice(this.cartItems);
       quants = this.getQuantity(this.cartItems);

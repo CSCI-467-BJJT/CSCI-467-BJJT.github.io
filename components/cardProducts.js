@@ -11,6 +11,7 @@ $(document).ready(function () {
     },
 
     methods: {
+      //add an order to cart
       addCart: function(name, quantity, price, img, partNum, weight, amount) {
         if(amount > 0) {
           const part = 
@@ -28,6 +29,7 @@ $(document).ready(function () {
         }
       },
 
+      //update the backend cart
       transfer: async function(cart){
         try {
             const response = await axios.post('http://localhost:3000/api/cart', Array.from(cart), {
@@ -43,6 +45,7 @@ $(document).ready(function () {
 
     },  
 
+    //run upon file load
     created() {
       (async () => {
       try {
