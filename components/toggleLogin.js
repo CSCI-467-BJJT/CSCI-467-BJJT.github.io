@@ -2,7 +2,6 @@ $(document).ready(function () {
   const toggle = Vue.createApp({
     data() {
       return {
-          //checkbox: false,
           selectedLogin: 'login1',
           empUser: null,
           empPassword: null,
@@ -11,6 +10,7 @@ $(document).ready(function () {
           loggedIn: null,
       }
     },
+    // Returns specific page title
     computed: {
       pageTitle() {
         if (this.selectedLogin === 'login1') {
@@ -26,9 +26,9 @@ $(document).ready(function () {
     methods: {
       login1() {
         //Handle login for Page 1 Warehouse
-        //this.loggedIn = true;
         const foundUser = wareUsers.find(user => user.username === this.empUser && user.password === this.empPassword);
 
+        // If user is found, navigate to warehouse dashboard. Otherwise show invalid message
         if(foundUser) 
         {
           alert('Login successful');
@@ -42,9 +42,9 @@ $(document).ready(function () {
       },
       login2() {
         // Handle login for Page 2 Receiving
-        //this.loggedIn = true;
         const foundUser = receiveUsers.find(user => user.username === this.empUser && user.password === this.empPassword);
 
+        // If user is found, navigate to receiving dashboard. Otherwise show invalid message
         if(foundUser) 
         {
           alert('Login successful');
@@ -57,9 +57,9 @@ $(document).ready(function () {
       },
       login3() {
         // Handle login for Page 3 Admin
-        //this.loggedIn = true;
         const foundUser = adminUsers.find(user => user.username === this.adminUser && user.password === this.adminPassword);
 
+        // If user is found, navigate to admin dashboard. Otherwise show invalid message
         if(foundUser) 
         {
           alert('Login successful');
@@ -73,6 +73,9 @@ $(document).ready(function () {
     },
 }).mount('#toggleLogin');
 
+
+// Credentials for each Login form
+// Warehouse Credentials array
 const wareUsers = [
   {id: 1, username: 'w1944092', password: 'warehouse1'},
   {id: 2, username: 'w1885782', password: 'warehouse2'},
@@ -80,6 +83,7 @@ const wareUsers = [
   {id: 4, username: 'w1929689', password: 'warehouse4'}
 ];
 
+// Receiving Credentials array
 const receiveUsers = [
   {id: 1, username: 'r1944092', password: 'receiving1'},
   {id: 2, username: 'r1885782', password: 'receiving2'},
@@ -87,6 +91,7 @@ const receiveUsers = [
   {id: 4, username: 'r1929689', password: 'receiving4'}
 ];
 
+// Admin Credentials array
 const adminUsers = [
   {id: 1, username: 'a1944092', password: 'adminpass1'},
   {id: 2, username: 'a1885782', password: 'adminpass2'},
