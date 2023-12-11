@@ -7,12 +7,12 @@ $(document).ready(function () {
           modalData: [],
           orderData: [],
           searchResults: [],
-
         };
   
       },
 
       methods: {
+        //view all of the order items in an order
         viewOrder: async function(orderId) {
             try {
               const response = await axios.post('http://localhost:3000/api/orderItems', {
@@ -21,7 +21,6 @@ $(document).ready(function () {
 
               this.modalData = this.orders[orderId-1];
               this.orderData = response.data;
-            //  this.orderData.push(orderId);
 
               console.log(response.data);
             } catch (error) {
@@ -29,6 +28,7 @@ $(document).ready(function () {
             }
         },
 
+        //complete the order
         async completeOrder(orderId) {
               try {
                 const response = await axios.post('http://localhost:3000/api/finishOrder', {
@@ -39,6 +39,7 @@ $(document).ready(function () {
             }
          },
 
+       //handle the shipping amount from the admin page
        async  insertShipping(){
             var amount = document.getElementById("shipping").value;
             var lower =  document.getElementById("lowerweight").value;
@@ -58,6 +59,7 @@ $(document).ready(function () {
 
       },
   
+      //call upon page load
       created() {
         (async () => {
         try {
