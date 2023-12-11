@@ -1,5 +1,5 @@
 //createDB.js
-//creates the order db
+//creates the order db and initializes the inventory
 
 var sqlite3 = require('sqlite3').verbose();
 const mysql = require('mysql');
@@ -45,21 +45,32 @@ function intializeInventory(newdb) {
     let query = 'SELECT description, number FROM parts';
 
     const sql = 'INSERT INTO Inventory (partNumber, itemName, quantity)' +
-                'VALUES (?, ?, ?)';
+        'VALUES (?, ?, ?)';
     var name, partNum;
 
     connection.query(query, function (err, data) {
         if (err) throw err;
         for (var i = 0; i < data.length; i++) {
-                name = data[i].description;
-                partNum = data[i].number;
+            name = data[i].description;
+            partNum = data[i].number;
 
-                newdb.run(sql, [partNum, name, 15], function(err) {     //insert part id
-                    if (err) {
-                        return console.log(err.message);
-                    }
-                }) 
+            newdb.run(sql, [partNum, name, 15], function (err) {
+                if (err) {
+                    return console.log(err.message);
+                }
+            })
         }
+
+        // Close SQLite connection
+        newdb.close((err) => {
+            if (err) {
+                console.error(err.message);
+            } else {
+                console.log('SQLite connection closed.');
+            }
+        });
+
+        // Close MySQL connection
+        connection.end();
     });
-    
 }

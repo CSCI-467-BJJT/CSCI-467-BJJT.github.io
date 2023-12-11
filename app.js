@@ -1,5 +1,8 @@
-//app.js
-//Connects to connec.js, collects data, and sends to ejs file
+//app.js - backend
+//holds all post and get functions for backend
+//connects to legacy database as well as the order database
+
+//include npm packages
 const dir = '${__dirname}/';
 const path = require('path');
 const express = require('express')
@@ -48,6 +51,7 @@ module.exports = {
 
 const query = util.promisify(connection.query).bind(connection);
 
+//Select info from all parts
 const fetchall = async () => {
     return new Promise((resolve, reject) => {
         connection.query('SELECT * FROM parts', function (err, data) {
@@ -73,17 +77,20 @@ app.get('/api/adminOC', async (req, res) => {
     }
 });
 
+//collect information on all orders
 const getOrderData = () => {
     return new Promise((resolve, reject) => {
         const order = [];
 
         let sql = `SELECT * FROM CustomerOrder`;
 
+        //query order db for all orders
         orderdb.all(sql, [], (err, rows) => {
             if (err) {
                 reject(err);
             } else {
                 for (var i = 0; i < rows.length; i++) {
+                    //push order info into array
                     order.push({
                         orderId: rows[i].orderId,
                         customerId: rows[i].customerId,
@@ -103,6 +110,7 @@ const getOrderData = () => {
     });
 };
 
+//update backend cart
 app.post('/api/cart', async (req, res) => {
     const cartItems = req.body;
 
@@ -123,6 +131,7 @@ app.post('/api/cart', async (req, res) => {
     res.json({ message: 'Data received successfully'});
 });
 
+//get all order items for an order
 app.post('/api/OrderItems', async (req, res) => {
     var id = req.body;
     items = []
@@ -135,16 +144,14 @@ app.post('/api/OrderItems', async (req, res) => {
     }
 });
 
-
-
-
+//pulls all order items given an order id
 const getitemdata = (id) => {
     return new Promise((resolve, reject) => {
         const item = [];
         idnum = id.orderId
         console.log(idnum);
         let sql = 'SELECT * FROM OrderItem WHERE orderId = ' + idnum.toString();
-
+        //query database for order items
         orderdb.all(sql, [], (err, rows) => {
             if (err) {
                 reject(err);
@@ -162,6 +169,7 @@ const getitemdata = (id) => {
     });
 };
 
+//update cart with cartitems
 app.post('/api/quantity', (req, res) => {
     const cartItems = req.body;
 
@@ -172,11 +180,13 @@ app.post('/api/quantity', (req, res) => {
     res.json({ message: 'Data received successfully'});
 });
 
+//send in backend cart
 app.get('/api/obtainCart', (req, res) => {
     const response = {cart, shippingtotal};
     res.json(response);
 });
 
+//collect all information from legacy db
 app.get('/api/collect', async (req, res) => {
     const partArray = [];
     try {
@@ -204,6 +214,7 @@ app.get('/api/collect', async (req, res) => {
     }
 });
 
+//add new weight bracket
 app.post('/api/handleShipping', async (req, res) => {
     try{
         const value = (req.body).amount;
@@ -217,35 +228,33 @@ app.post('/api/handleShipping', async (req, res) => {
     }
 }),
 
+//add products to inventory from receiving desk
 app.post('/api/handleInventory', async (req, res) => {
     try{
         const descriptor= (req.body).descriptor;
         const quantity = (req.body).quantity;
 
-        addProducts(descriptor, quantity);           //add the new bracket into the order database
+        addProducts(descriptor, quantity);
     } catch (error) {
         console.error(error)
     }
 }),
 
+//complete order and update order status
 app.post('/api/finishOrder', async (req, res) => {
     try{
         const id = (req.body).orderId;
 
-
-        changeOrderStatus(id);           //add the new bracket into the order database
+        changeOrderStatus(id);
     } catch (error) {
         console.error(error)
     }
 }),
         
-
+//proccess a completed order
 app.post('/api/processOrder', async (req, res) => {
     try{
         
-        // Extract request parameters
-       // const { creditCardNumber, customerId, email, shipAddr, month, year} = req.query;
-
        const values = req.body;
 
        creditCardNumber = values[0];
@@ -259,21 +268,12 @@ app.post('/api/processOrder', async (req, res) => {
 
        weight = 0;
 
+       //calculate the quantity and weight
        for (var i = 0; i < cart.length; i++) {
             total += (cart[i].price * cart[i].quantity);
             weight += (cart[i].weight * cart[i].quantity);
        }
        total = total.toFixed(2);
-       /*
-       let shipping = 0;
-       
-       try {
-        shipping = await getshipping(weight);
-       } catch (error) {
-            console.error(error);
-       }
-       shippingtotal = shipping;
-       */
        
        let numstr = creditCardNumber.toString();
        let CCLength = numstr.length;
@@ -342,7 +342,7 @@ app.listen(port, () => {
     console.log(`Express server listening at http://localhost:${port}`)
   })
 
-
+//connect to order database
 var dbpath = './order.db';
 var dbExists = fs.existsSync(dbpath);
 if (!dbExists) {
@@ -358,7 +358,7 @@ var orderdb = new sqlite3.Database(dbpath, sqlite3.OPEN_READWRITE,  (err) => {
     console.log("successfuly connected to order database");
     });
 
-
+//send email to user
 function emailToUser(email, header, body) {
     const transport = nodemailer.createTransport({
         service: 'gmail',
@@ -381,6 +381,7 @@ function emailToUser(email, header, body) {
 
     };
 
+    //send message
     transport.sendMail(mail, function (err, info) {
         if(err) {
             console.log(err);
@@ -390,29 +391,6 @@ function emailToUser(email, header, body) {
         }
     })
 }
-
-//for debugging use only
-/*
-function printCustOrder(){
-
-    let sql1 = `SELECT * FROM CustomerOrder`;
-    let sql2 = `SELECT * FROM OrderItem`;
-
-    orderdb.all(sql1, [], (err, data) => {
-        if (err) {
-          throw err;
-        }console.log(data);
-       
-      });
-    
-      orderdb.all(sql2, [], (err, data) => {
-        if (err) {
-          throw err;
-        }console.log(data)
-
-      });
-}
-*/
 
 //for debugging use only
 function printweights() {
@@ -426,6 +404,7 @@ function printweights() {
       });
 }
 
+//calculate the amount on hand
 function onHand(id) {
     return new Promise((resolve, reject) => {
         let sql = 'SELECT quantity FROM Inventory WHERE partNumber = ?';
@@ -440,6 +419,7 @@ function onHand(id) {
         });
     });
 }
+//change the status of an order
 function changeOrderStatus(id) {
     const sql = 'UPDATE CustomerOrder SET status = ? WHERE orderId = ?';
     const query = 'SELECT email FROM CustomerOrder WHERE orderId = ?';
@@ -447,7 +427,7 @@ function changeOrderStatus(id) {
         if (err) {
             return console.log(err.message);
         }
-
+        //complete order and send email
         orderdb.all(query, [id], (err, data) => {
             if (err) {
               throw err;
@@ -458,6 +438,7 @@ function changeOrderStatus(id) {
     }) 
 }
 
+//add a weight bracket
 function addWeightBracket(lower, upper, amount) {
     const sql = 'INSERT INTO WeightBracket (lowerWeight, upperWeight, amount)' +
                 'VALUES (?, ?, ?)';
@@ -471,6 +452,7 @@ function addWeightBracket(lower, upper, amount) {
     printweights();
 }
 
+//update the inventory
 function addProducts(descriptor, q) {
     const sql = 'UPDATE Inventory SET quantity = ? WHERE partNumber = ?';
     let quantity = parseInt(q);
@@ -479,6 +461,7 @@ function addProducts(descriptor, q) {
 
         let query = 'SELECT itemName, quantity FROM Inventory WHERE partNumber = ' + descriptor.toString();
 
+        //update quantity
         orderdb.all(query, [], (err, data) => {
             if (err) {
               throw err;
@@ -501,6 +484,7 @@ function addProducts(descriptor, q) {
     //or description
     else {
             let query = "SELECT partNumber, quantity FROM Inventory WHERE itemName = '" + descriptor + "'";
+            //update quantity
             orderdb.all(query, [], (err, data) => {
                 if (err) {
                   throw err;
@@ -520,7 +504,7 @@ function addProducts(descriptor, q) {
     }
 
 }
-
+//print out the inventory
 function printInventory() {
     let sql = 'SELECT * FROM Inventory';
 
@@ -532,6 +516,7 @@ function printInventory() {
       });
 }
 
+//get the shipping and handeling
 function getshipping(weight) {
     let sql = 'SELECT * FROM WeightBracket';
 
@@ -542,6 +527,7 @@ function getshipping(weight) {
                 return;
             }
 
+            //find the weight bracket that matches the weight of order
             for (var i = 0; i < data.length; i++) {
                 if (weight >= data[i].lowerWeight && weight <= data[i].upperWeight) {
                     resolve(data[i].amount);
@@ -554,6 +540,7 @@ function getshipping(weight) {
     });
 }
 
+//add the order num into the customer order table
 function addOrderNum(customerId, currentDate, shipAddr, email, numstr, currentDate, total, weight, cart){
     
     const insertOrderPartSQL = 'INSERT INTO CustomerOrder (customerId, orderDate, shipAddr, email, creditCardNumber, creditCardExpDate, status, shippingAmount, totalAmount)' +
@@ -567,11 +554,7 @@ function addOrderNum(customerId, currentDate, shipAddr, email, numstr, currentDa
 
     var inputDate = month.toString() + "/" + day.toString();
 
-        //Prepare and excute SQL statement
-        /*
-        const orderPartStm = newdb.prepare(insertOrderPartSQL);
-        const success = orderPartStm.run(customerId, shipAddr, email, formatedCCNUM, `${creditCardExpDate}-1`, total);      
-        */
+       //insert the order information into the customerorder table
        orderdb.run(insertOrderPartSQL, [customerId, inputDate, shipAddr, email, numstr, currentDate, weight, total], function(err) {     //insert part id
         if (err) {
           return console.log(err.message);
@@ -590,6 +573,7 @@ function addOrderNum(customerId, currentDate, shipAddr, email, numstr, currentDa
         removeFromInventory(cart, sql)
 }
 
+//remove item from inventory on order
 async function removeFromInventory(cart, sql) {
     const query = "SELECT quantity FROM Inventory WHERE partNumber = ?";
 
@@ -607,6 +591,7 @@ async function removeFromInventory(cart, sql) {
     }
 }
 
+//get the quantity of an order
 function getOrderQuantity(partNum, query) {
     return new Promise((resolve, reject) => {
         orderdb.all(query, [partNum], (err, data) => {
@@ -619,6 +604,7 @@ function getOrderQuantity(partNum, query) {
     });
 }
 
+//update the inventory in orderdb
 function updateInventory(sql, newQuantity, partNum) {
     return new Promise((resolve, reject) => {
         orderdb.run(sql, [newQuantity, partNum], (err) => {
